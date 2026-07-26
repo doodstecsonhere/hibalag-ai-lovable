@@ -21,17 +21,17 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Hibalag AI — Silliman 125th Founders Day Guide" },
+      { title: "Hibalag AI: Silliman Founders Week Guide" },
       {
         name: "description",
         content:
-          "Ask Hibalag AI about Silliman University's 125th Founders Day and Hibalag Festival schedule, August 2026 — in Bisaya, Tagalog, or English.",
+          "Ask Hibalag AI about Silliman University's Founders Week and Hibalag Festival schedule on August — in Bisaya, Tagalog, English, etc.",
       },
-      { property: "og:title", content: "Hibalag AI — Silliman 125th Founders Day Guide" },
+      { property: "og:title", content: "Hibalag AI: Silliman Founders Week Guide" },
       {
         property: "og:description",
         content:
-          "Your witty Bisaya-speaking guide to every Hibalag Festival event, venue, and itinerary.",
+          "Ask Hibalag AI about Silliman University's Founders Week and Hibalag Festival schedule on August — in Bisaya, Tagalog, English, etc.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
