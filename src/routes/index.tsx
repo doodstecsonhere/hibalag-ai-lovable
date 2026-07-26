@@ -15,7 +15,7 @@ import {
   type Language,
 } from "@/hooks/use-hibalag";
 import { loadSchedule, type ScheduleEvent } from "@/lib/schedule";
-import { createThreadStore, newId } from "@/lib/threads";
+import { newId } from "@/lib/threads";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
