@@ -21,7 +21,7 @@ import { loadSchedule, type ScheduleEvent } from "@/lib/schedule";
 import { supabase } from "@/lib/supabase";
 import {
   createThreadStore,
-  hasLocalThreads,
+  localThreadCount,
   migrateLocalThreads,
   newId,
   type StoredMessage,
@@ -75,7 +75,7 @@ export function HibalagApp({ threadId }: { threadId: string }) {
   useEffect(() => {
     if (!ready) return;
     refreshThreads();
-    setLocalCount(hasLocalThreads() && user ? 1 : 0);
+    setLocalCount(user ? localThreadCount() : 0);
   }, [ready, refreshThreads, user]);
 
   useEffect(() => {
