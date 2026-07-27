@@ -194,6 +194,10 @@ export function hasLocalThreads() {
   return localListThreads().length > 0;
 }
 
+export function localThreadCount() {
+  return localListThreads().length;
+}
+
 /** Copies guest threads into the signed-in account, then clears the local copies. */
 export async function migrateLocalThreads(userId: string) {
   const threads = localListThreads();
