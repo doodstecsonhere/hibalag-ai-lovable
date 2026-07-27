@@ -1,0 +1,30 @@
+import { createFileRoute } from "@tanstack/react-router";
+
+import { HibalagApp } from "@/components/hibalag-app";
+
+export const Route = createFileRoute("/chat/$threadId")({
+  head: () => ({
+    meta: [
+      { title: "Chat · Hibalag AI Founders Week Guide" },
+      {
+        name: "description",
+        content:
+          "Your Hibalag AI conversation about Silliman University's 125th Founders Day and Hibalag Festival schedule, venues, and itineraries.",
+      },
+      { property: "og:title", content: "Chat · Hibalag AI Founders Week Guide" },
+      {
+        property: "og:description",
+        content:
+          "Your Hibalag AI conversation about Silliman University's 125th Founders Day and Hibalag Festival schedule, venues, and itineraries.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: ChatThreadPage,
+});
+
+function ChatThreadPage() {
+  const { threadId } = Route.useParams();
+  return <HibalagApp threadId={threadId} />;
+}
