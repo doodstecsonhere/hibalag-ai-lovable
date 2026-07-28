@@ -239,8 +239,8 @@ export function HibalagApp({ threadId }: { threadId: string }) {
         </div>
       </header>
 
-      <main className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
-        <div className="min-h-0">
+      <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+        <div className="min-h-0 min-w-0">
           {initialMessages ? (
             <ChatPanel
               key={threadId}
