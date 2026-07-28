@@ -270,7 +270,7 @@ export function HibalagApp({ threadId }: { threadId: string }) {
       {!canvasOpen ? (
         <Button
           onClick={() => setCanvasOpen(true)}
-          className="fixed right-4 bottom-[calc(6.5rem+env(safe-area-inset-bottom))] z-30 min-h-11 rounded-full px-4 shadow-[var(--shadow-glow)] lg:hidden"
+          className="fixed right-4 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-40 min-h-11 rounded-full px-4 shadow-[var(--shadow-glow)] lg:hidden"
         >
           <CalendarRange className="mr-1.5 size-4" /> View Schedule Canvas
         </Button>
