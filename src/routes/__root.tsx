@@ -83,7 +83,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "author", content: "Hibalag AI" },
       { name: "theme-color", content: "#990000" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "Hibalag AI" },
+
       { property: "og:title", content: "Hibalag AI: Silliman Founders Week Guide" },
       { property: "og:description", content: "Ask Hibalag AI about Silliman University's Founders Week and Hibalag Festival schedule on August — in Bisaya, Tagalog, English, etc." },
       { property: "og:type", content: "website" },
