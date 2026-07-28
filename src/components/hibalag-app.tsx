@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { UIMessage } from "ai";
-import { CalendarRange, History, MessageSquare } from "lucide-react";
+import { CalendarRange, Menu } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { AuthDialog } from "@/components/auth-dialog";
@@ -9,6 +9,12 @@ import { ChatPanel } from "@/components/chat-panel";
 import { InstallPrompt } from "@/components/install-prompt";
 import { ThreadDrawer } from "@/components/thread-drawer";
 import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import logo from "@/assets/hibalag-logo.png";
 import {
   useInstallPrompt,
@@ -29,11 +35,11 @@ import {
 } from "@/lib/threads";
 import { cn } from "@/lib/utils";
 
-const LANGUAGES: Array<{ value: Language; label: string }> = [
-  { value: "auto", label: "Auto" },
-  { value: "bisaya", label: "Bisaya" },
-  { value: "tagalog", label: "Tagalog" },
-  { value: "english", label: "English" },
+const LANGUAGES: Array<{ value: Language; label: string; mobile: boolean }> = [
+  { value: "auto", label: "Auto", mobile: false },
+  { value: "bisaya", label: "Bisaya", mobile: true },
+  { value: "tagalog", label: "Tagalog", mobile: false },
+  { value: "english", label: "English", mobile: true },
 ];
 
 function toUIMessages(stored: StoredMessage[]): UIMessage[] {
@@ -42,6 +48,11 @@ function toUIMessages(stored: StoredMessage[]): UIMessage[] {
     role: message.role,
     parts: [{ type: "text" as const, text: message.content }],
   }));
+}
+
+function todayIso() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
 
 export function HibalagApp({ threadId }: { threadId: string }) {
@@ -114,6 +125,11 @@ export function HibalagApp({ threadId }: { threadId: string }) {
 
   useEffect(refresh, [refresh]);
 
+  const liveCount = useMemo(() => {
+    const iso = todayIso();
+    return events.filter((event) => event.date === iso).length;
+  }, [events]);
+
   const goToThread = useCallback(
     (id: string) => {
       setDrawerOpen(false);
@@ -150,47 +166,76 @@ export function HibalagApp({ threadId }: { threadId: string }) {
   }, [user, refreshThreads]);
 
   return (
-    <div className="festive-grain flex h-dvh flex-col bg-background">
-      <header className="z-20 flex shrink-0 items-center gap-2 border-b border-border/70 bg-card/85 px-3 py-2 backdrop-blur">
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => setDrawerOpen(true)}
-          aria-label="Open chat history"
-        >
-          <History className="size-4" />
-        </Button>
-        <img src={logo} alt="Hibalag AI" width={36} height={36} className="size-9 rounded-xl" />
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-sm leading-tight font-semibold">Hibalag AI</p>
-          <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
+    <div className="festive-grain flex h-dvh flex-col bg-background pt-[env(safe-area-inset-top)]">
+      <header className="z-20 grid shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-border/70 bg-card/85 px-2 py-1.5 backdrop-blur sm:px-3 sm:py-2">
+        <div className="flex items-center gap-1">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setDrawerOpen(true)}
+            aria-label="Open menu and chat history"
+            className="size-11"
+          >
+            <Menu className="size-5" />
+          </Button>
+          <img
+            src={logo}
+            alt="Hibalag AI"
+            width={36}
+            height={36}
+            className="hidden size-9 shrink-0 rounded-xl sm:block"
+          />
+        </div>
+
+        <div className="min-w-0">
+          <p className="truncate font-display text-sm leading-tight font-semibold">Hibalag AI</p>
+          <p className="flex items-center gap-1 truncate text-[11px] text-muted-foreground">
             <span
               className={cn(
-                "size-1.5 rounded-full",
+                "size-1.5 shrink-0 rounded-full",
                 online ? "animate-live-pulse bg-chart-4" : "bg-muted-foreground",
               )}
             />
-            {online ? "Live · Founders Day 2026" : "Offline mode"}
-            {user ? " · Synced" : ""}
+            <span className="truncate">
+              {online ? "Live · Founders Day 2026" : "Offline mode"}
+              {user ? " · Synced" : ""}
+            </span>
           </p>
         </div>
 
-        <div className="flex items-center gap-1 rounded-full border border-border bg-background p-0.5">
-          {LANGUAGES.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setLanguage(option.value)}
-              className={cn(
-                "rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors",
-                language === option.value
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent",
-              )}
-            >
-              {option.label}
-            </button>
-          ))}
+        <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex items-center gap-0.5 rounded-full border border-border bg-background p-0.5">
+            {LANGUAGES.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setLanguage(option.value)}
+                className={cn(
+                  "min-h-9 rounded-full px-2.5 text-[11px] font-semibold transition-colors",
+                  option.mobile ? "" : "hidden sm:block",
+                  language === option.value
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent",
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+
+          <Button
+            variant="secondary"
+            onClick={() => setCanvasOpen(true)}
+            aria-label="Open schedule canvas"
+            className="relative size-11 rounded-full p-0 lg:hidden"
+          >
+            <CalendarRange className="size-5" />
+            {liveCount > 0 ? (
+              <span className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                {liveCount}
+              </span>
+            ) : null}
+          </Button>
         </div>
       </header>
 
@@ -222,42 +267,35 @@ export function HibalagApp({ threadId }: { threadId: string }) {
         </div>
       </main>
 
-      <div className="lg:hidden">
-        <div
-          className={cn(
-            "fixed inset-x-0 bottom-0 z-40 h-[85dvh] rounded-t-3xl border-t border-border bg-background shadow-[var(--shadow-glow)] transition-transform duration-300",
-            canvasOpen ? "translate-y-0" : "translate-y-full",
-          )}
+      {!canvasOpen ? (
+        <Button
+          onClick={() => setCanvasOpen(true)}
+          className="fixed right-4 bottom-[calc(6.5rem+env(safe-area-inset-bottom))] z-30 min-h-11 rounded-full px-4 shadow-[var(--shadow-glow)] lg:hidden"
         >
-          <CanvasPanel
-            events={events}
-            filters={filters}
-            onFiltersChange={setFilters}
-            loading={loading}
-            offlineCopy={fromCache && !online}
-            error={error}
-            onRetry={refresh}
-            onClose={() => setCanvasOpen(false)}
-          />
-        </div>
+          <CalendarRange className="mr-1.5 size-4" /> View Schedule Canvas
+        </Button>
+      ) : null}
 
-        {!canvasOpen ? (
-          <Button
-            onClick={() => setCanvasOpen(true)}
-            className="fixed right-4 bottom-24 z-30 rounded-full shadow-[var(--shadow-glow)]"
-          >
-            <CalendarRange className="mr-1.5 size-4" /> Schedule
-          </Button>
-        ) : (
-          <Button
-            variant="secondary"
-            onClick={() => setCanvasOpen(false)}
-            className="fixed right-4 bottom-4 z-50 rounded-full"
-          >
-            <MessageSquare className="mr-1.5 size-4" /> Chat
-          </Button>
-        )}
-      </div>
+      <Drawer open={canvasOpen} onOpenChange={setCanvasOpen}>
+        <DrawerContent className="h-[90dvh] lg:hidden">
+          <DrawerTitle className="sr-only">Iskedyul Canvas</DrawerTitle>
+          <DrawerDescription className="sr-only">
+            Browse and filter Founders Week events.
+          </DrawerDescription>
+          <div className="min-h-0 flex-1">
+            <CanvasPanel
+              events={events}
+              filters={filters}
+              onFiltersChange={setFilters}
+              loading={loading}
+              offlineCopy={fromCache && !online}
+              error={error}
+              onRetry={refresh}
+              onClose={() => setCanvasOpen(false)}
+            />
+          </div>
+        </DrawerContent>
+      </Drawer>
 
       <ThreadDrawer
         open={drawerOpen}
