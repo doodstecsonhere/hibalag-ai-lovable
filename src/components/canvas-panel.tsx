@@ -167,8 +167,14 @@ export function CanvasPanel({
               </span>
             ) : null}
             {onClose ? (
-              <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close canvas">
-                <X className="size-4" />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                aria-label="Close canvas"
+                className="size-11"
+              >
+                <X className="size-5" />
               </Button>
             ) : null}
           </div>
@@ -179,22 +185,22 @@ export function CanvasPanel({
             value={filters.query}
             onChange={(event) => onFiltersChange({ ...filters, query: event.target.value })}
             placeholder="Pangitaa ang event, venue, o org…"
-            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+            className="min-h-11 w-full rounded-xl border border-border bg-background px-3 py-2 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
           />
         </div>
 
-        <div className="scrollbar-slim mt-3 -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+        <div className="scrollbar-slim mt-3 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
           <button
             type="button"
             onClick={() => onFiltersChange({ ...filters, date: null })}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
+              "min-h-11 shrink-0 rounded-full border px-4 text-xs font-semibold transition-colors",
               filters.date === null
                 ? "border-primary bg-primary text-primary-foreground"
                 : "border-border bg-background text-muted-foreground hover:bg-accent",
             )}
           >
-            <CalendarDays className="mr-1 inline size-3" aria-hidden /> All days
+            <CalendarDays className="mr-1 inline size-3.5" aria-hidden /> All days
           </button>
           {FESTIVAL_DAYS.map((day) => (
             <button
@@ -202,7 +208,7 @@ export function CanvasPanel({
               type="button"
               onClick={() => onFiltersChange({ ...filters, date: day })}
               className={cn(
-                "shrink-0 rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
+                "min-h-11 min-w-11 shrink-0 rounded-full border px-4 text-xs font-semibold transition-colors",
                 filters.date === day
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-background text-muted-foreground hover:bg-accent",
@@ -213,7 +219,7 @@ export function CanvasPanel({
           ))}
         </div>
 
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           <Filter className="size-3.5 text-muted-foreground" aria-hidden />
           {CATEGORIES.map((category) => {
             const active = filters.categories.includes(category);
@@ -224,7 +230,7 @@ export function CanvasPanel({
                 onClick={() => toggleCategory(category)}
                 aria-pressed={active}
                 className={cn(
-                  "rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors",
+                  "min-h-11 rounded-full border px-3.5 text-[11px] font-semibold transition-colors",
                   active
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background text-muted-foreground hover:bg-accent",
@@ -237,7 +243,8 @@ export function CanvasPanel({
         </div>
       </header>
 
-      <div className="scrollbar-slim min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4">
+      <div className="scrollbar-slim smooth-scroll-y min-h-0 flex-1 space-y-5 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+
         {loading ? (
           <div className="space-y-3">
             {[0, 1, 2].map((index) => (

@@ -105,7 +105,7 @@ export function ChatPanel({
         </div>
       ) : null}
 
-      <div ref={scrollRef} className="scrollbar-slim min-h-0 flex-1 overflow-y-auto px-4 py-5">
+      <div ref={scrollRef} className="scrollbar-slim smooth-scroll-y min-h-0 flex-1 px-4 py-5">
         {messages.length === 0 ? (
           <div className="mx-auto max-w-md py-8 text-center">
             <h1 className="font-display text-2xl font-semibold">Kumusta, Sillimanian!</h1>
@@ -159,15 +159,15 @@ export function ChatPanel({
         )}
       </div>
 
-      <div className="shrink-0 border-t border-border/70 bg-card/80 px-4 py-3 backdrop-blur">
-        <div className="scrollbar-slim -mx-1 mb-2 flex gap-1.5 overflow-x-auto px-1">
+      <div className="shrink-0 border-t border-border/70 bg-card/80 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+        <div className="scrollbar-slim -mx-1 mb-2 flex gap-2 overflow-x-auto px-1 pb-1">
           {SUGGESTIONS.map((suggestion) => (
             <button
               key={suggestion}
               type="button"
               disabled={busy}
               onClick={() => submit(suggestion)}
-              className="shrink-0 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
+              className="min-h-11 shrink-0 rounded-full border border-border bg-background px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
             >
               {suggestion}
             </button>
@@ -192,8 +192,9 @@ export function ChatPanel({
             }}
             rows={1}
             placeholder="Pangutana bahin sa Hibalag…"
-            className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+            className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
           />
+
           <Button type="submit" size="icon" className="size-11 rounded-2xl" disabled={busy || !input.trim()}>
             {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" />}
             <span className="sr-only">Send</span>
