@@ -105,7 +105,7 @@ export function ChatPanel({
         </div>
       ) : null}
 
-      <div ref={scrollRef} className="scrollbar-slim min-h-0 flex-1 overflow-y-auto px-4 py-5">
+      <div ref={scrollRef} className="scrollbar-slim smooth-scroll-y min-h-0 flex-1 px-4 py-5">
         {messages.length === 0 ? (
           <div className="mx-auto max-w-md py-8 text-center">
             <h1 className="font-display text-2xl font-semibold">Kumusta, Sillimanian!</h1>
