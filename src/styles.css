@@ -216,6 +216,14 @@
   scrollbar-color: var(--border) transparent;
 }
 
+@utility smooth-scroll-y {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+}
+
+
 @keyframes hibalag-pulse {
   0%,
   100% {
