@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "sdk_version": "0.25.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "hibalag-ai-mcp",
+      "version": "0.1.0",
+      "title": "Hibalag AI"
+    },
+    "tools": [
+      {
+        "name": "list_events",
+        "title": "List festival events",
+        "description": "List public Silliman University Founders Day / Hibalag Festival events, optionally filtered by date (YYYY-MM-DD), category, or a text query.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "date": {
+              "description": "Filter to a single date, format YYYY-MM-DD (August 2026).",
+              "type": "string"
+            },
+            "category": {
+              "description": "Filter by category: Featured, Religious, Alumni, Cultural, or Parties.",
+              "type": "string"
+            },
+            "query": {
+              "description": "Free-text search across title, venue, lead unit and description.",
+              "type": "string"
+            },
+            "limit": {
+              "description": "Maximum number of events to return (default 50).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_event",
+        "title": "Get event details",
+        "description": "Get the full public details of one Hibalag Festival event by its id (from list_events) or by an exact/partial title match.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {
+              "description": "Event id returned by list_events.",
+              "type": "string"
+            },
+            "title": {
+              "description": "Full or partial event title.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_event_dates",
+        "title": "List festival dates",
+        "description": "List every public festival date with how many events happen on it, plus the categories present that day.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "_unused": {
+              "description": "Not used.",
+              "type": "string"
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
