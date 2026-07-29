@@ -155,7 +155,7 @@ export function CanvasPanel({
       <header className="shrink-0 border-b border-border/70 bg-card/80 px-4 py-3 backdrop-blur">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="font-display text-lg font-semibold">Iskedyul Canvas</h2>
+            <h2 className="font-display text-lg font-semibold">Schedule Canvas</h2>
             <p className="text-xs text-muted-foreground">
               {visible.length} event{visible.length === 1 ? "" : "s"} · Aug 1–29, 2026
             </p>
@@ -284,7 +284,7 @@ export function CanvasPanel({
 
       <footer className="shrink-0 border-t border-border/70 bg-card/70 px-4 py-2">
         <Badge variant="secondary" className="text-[11px] font-medium">
-          Silliman University · 125th Founders Day
+          Silliman University · Founders Day Celebration
         </Badge>
       </footer>
     </section>

@@ -18,10 +18,10 @@ import {
 
 const SUGGESTIONS = [
   "Unsa'y events karong adlawa?",
-  "Ipakita ang Parada Sillimaniana schedule",
+  "Naa'y open house?",
+  "When ang parade?",
   "Alumni homecoming activities?",
-  "Plan a 3-day Hibalag itinerary",
-  "Asa ang mga party sa Hibalag grounds?",
+  "Ang Miss Silliman?",
 ];
 
 function messageText(message: UIMessage) {
@@ -110,8 +110,9 @@ export function ChatPanel({
           <div className="mx-auto max-w-md py-8 text-center">
             <h1 className="font-display text-2xl font-semibold">Kumusta, Sillimanian!</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Ako si <strong>Hibalag AI</strong> — imong giya sa 125th Founders Day ug Hibalag
-              Festival, Agosto 2026. Pangutan-a ko bahin sa schedule, venues, o itinerary.
+              Ako si <strong>Hibalag AI</strong>...<br />
+              imong guide sa Founders Week ug Hibalag Festival karong August.<br />
+              Pangutana kabahin sa schedule, venues, o itinerary.
             </p>
           </div>
         ) : (

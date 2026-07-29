@@ -197,7 +197,7 @@ export function HibalagApp({ threadId }: { threadId: string }) {
               )}
             />
             <span className="truncate">
-              {online ? "Live · Founders Day 2026" : "Offline mode"}
+              {online ? "Active" : "Offline mode"}
               {user ? " · Synced" : ""}
             </span>
           </p>
