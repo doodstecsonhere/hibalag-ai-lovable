@@ -15,7 +15,7 @@ import {
   DrawerDescription,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import logo from "@/assets/hibalag-logo.png";
+const logo = "/apple-touch-icon.png";
 import {
   useInstallPrompt,
   useLanguage,
