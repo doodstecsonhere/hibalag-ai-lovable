@@ -18,11 +18,11 @@ import {
 const logo = "/apple-touch-icon.png";
 import {
   useInstallPrompt,
-  useLanguage,
   useOnlineStatus,
   useOptionalAuth,
   type Language,
 } from "@/hooks/use-hibalag";
+
 import { LANGUAGE_LABELS } from "@/lib/i18n";
 import { LanguageProvider, useI18n } from "@/lib/i18n-context";
 import { loadSchedule, type ScheduleEvent } from "@/lib/schedule";

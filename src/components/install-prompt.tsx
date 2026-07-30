@@ -1,6 +1,7 @@
 import { Download, Smartphone, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n-context";
 
 type InstallPromptProps = {
   open: boolean;
@@ -9,6 +10,7 @@ type InstallPromptProps = {
 };
 
 export function InstallPrompt({ open, onInstall, onDismiss }: InstallPromptProps) {
+  const { t } = useI18n();
   if (!open) return null;
 
   return (
@@ -19,23 +21,21 @@ export function InstallPrompt({ open, onInstall, onDismiss }: InstallPromptProps
             <Smartphone className="size-5" aria-hidden />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="font-display text-base font-semibold">Install Hibalag AI</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              I-add sa imong home screen para paspas ug ma-browse ang schedule bisan walay signal.
-            </p>
+            <h2 className="font-display text-base font-semibold">{t("install.title")}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("install.body")}</p>
             <div className="mt-3 flex gap-2">
               <Button size="sm" onClick={onInstall}>
-                <Download className="mr-1.5 size-4" /> Install
+                <Download className="mr-1.5 size-4" /> {t("install.action")}
               </Button>
               <Button size="sm" variant="ghost" onClick={onDismiss}>
-                Not now
+                {t("install.later")}
               </Button>
             </div>
           </div>
           <button
             type="button"
             onClick={onDismiss}
-            aria-label="Dismiss install prompt"
+            aria-label={t("install.dismiss")}
             className="rounded-full p-1 text-muted-foreground hover:bg-accent"
           >
             <X className="size-4" />
