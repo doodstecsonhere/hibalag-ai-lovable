@@ -100,25 +100,23 @@ export function ChatPanel({
   };
 
   return (
-    <section className="flex h-full min-h-0 flex-col" aria-label="Chat with Hibalag AI">
+    <section className="flex h-full min-h-0 flex-col" aria-label={t("chat.aria")}>
       {!online ? (
         <div className="flex items-center gap-2 bg-muted px-4 py-2 text-xs text-muted-foreground">
           <WifiOff className="size-3.5" aria-hidden />
-          Offline ka karon — mabasa gihapon ang schedule sa Canvas, pero ang chat mo-balik inig
-          signal.
+          {t("chat.offlineBanner")}
         </div>
       ) : null}
 
       <div ref={scrollRef} className="scrollbar-slim smooth-scroll-y min-h-0 flex-1 px-4 py-5">
         {messages.length === 0 ? (
           <div className="mx-auto max-w-md py-8 text-center">
-            <h1 className="font-display text-2xl font-semibold">Kumusta, Sillimanian!</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Ako si <strong>Hibalag AI</strong>...<br />
-              imong guide sa Founders Week ug Hibalag Festival karong August.<br />
-              Pangutana kabahin sa schedule, venues, o itinerary.
+            <h1 className="font-display text-2xl font-semibold">{t("chat.welcomeTitle")}</h1>
+            <p className="mt-2 text-sm whitespace-pre-line text-muted-foreground">
+              {t("chat.welcomeBody")}
             </p>
           </div>
+
         ) : (
           <div className="mx-auto flex max-w-2xl flex-col gap-4">
             {messages.map((message) => {
