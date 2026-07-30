@@ -112,7 +112,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           {message ? <p className="text-xs text-muted-foreground">{message}</p> : null}
 
           <Button type="submit" disabled={busy}>
-            {mode === "signin" ? t("auth.signinAction") : t("auth.signupAction")}
+            {mode === "signin" ? t("auth.signin") : t("auth.signup")}
           </Button>
         </form>
 
