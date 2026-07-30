@@ -35,12 +35,8 @@ import {
 } from "@/lib/threads";
 import { cn } from "@/lib/utils";
 
-const LANGUAGES: Array<{ value: Language; label: string; mobile: boolean }> = [
-  { value: "auto", label: "Auto", mobile: false },
-  { value: "bisaya", label: "Bisaya", mobile: true },
-  { value: "tagalog", label: "Tagalog", mobile: false },
-  { value: "english", label: "English", mobile: true },
-];
+const LANGUAGE_OPTIONS: Language[] = ["bisaya", "english", "tagalog"];
+
 
 function toUIMessages(stored: StoredMessage[]): UIMessage[] {
   return stored.map((message) => ({
