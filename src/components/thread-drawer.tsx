@@ -3,8 +3,10 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/lib/i18n-context";
 import type { Thread } from "@/lib/threads";
 import { cn } from "@/lib/utils";
+
 
 type ThreadDrawerProps = {
   open: boolean;
