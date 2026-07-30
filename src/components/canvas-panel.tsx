@@ -269,21 +269,20 @@ export function CanvasPanel({
           <div className="rounded-2xl border border-border bg-card p-5 text-center">
             <p className="text-sm text-muted-foreground">{error}</p>
             <Button className="mt-3" size="sm" onClick={onRetry}>
-              <RefreshCw className="mr-1.5 size-3.5" /> Sulayi pag-usab
+              <RefreshCw className="mr-1.5 size-3.5" /> {t("canvas.retry")}
             </Button>
           </div>
         ) : grouped.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              Walay event nga mo-match ani nga filter, bay. Sulayi ug lain nga adlaw o category.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("canvas.empty")}</p>
+
           </div>
         ) : (
           grouped.map(([date, dayEvents]) => (
             <div key={date}>
               <div className="sticky top-0 z-10 -mx-1 mb-2 bg-surface/90 px-1 py-1 backdrop-blur">
                 <h3 className="font-display text-sm font-semibold tracking-wide text-primary uppercase">
-                  {date === "TBA" ? "Date TBA" : formatEventDate(date)}
+                  {date === "TBA" ? t("canvas.dateTba") : formatEventDate(date)}
                 </h3>
               </div>
               <div className="space-y-3">
@@ -298,7 +297,7 @@ export function CanvasPanel({
 
       <footer className="shrink-0 border-t border-border/70 bg-card/70 px-4 py-2">
         <Badge variant="secondary" className="text-[11px] font-medium">
-          Silliman University · Founders Day Celebration
+          {t("canvas.footer")}
         </Badge>
       </footer>
     </section>
