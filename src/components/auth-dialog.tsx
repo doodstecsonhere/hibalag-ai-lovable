@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useI18n } from "@/lib/i18n-context";
 import { supabase } from "@/lib/supabase";
 
 type AuthDialogProps = {
@@ -18,12 +19,14 @@ type AuthDialogProps = {
 };
 
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
+  const { t } = useI18n();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
