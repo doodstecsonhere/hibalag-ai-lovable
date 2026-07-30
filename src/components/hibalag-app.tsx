@@ -289,16 +289,15 @@ function HibalagShell({ threadId }: { threadId: string }) {
           onClick={() => setCanvasOpen(true)}
           className="fixed right-4 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-40 min-h-11 rounded-full px-4 shadow-[var(--shadow-glow)] lg:hidden"
         >
-          <CalendarRange className="mr-1.5 size-4" /> View Schedule Canvas
+          <CalendarRange className="mr-1.5 size-4" /> {t("canvas.fab")}
         </Button>
       ) : null}
 
       <Drawer open={canvasOpen} onOpenChange={setCanvasOpen}>
         <DrawerContent className="h-[90dvh] lg:hidden">
-          <DrawerTitle className="sr-only">Iskedyul Canvas</DrawerTitle>
-          <DrawerDescription className="sr-only">
-            Browse and filter Founders Week events.
-          </DrawerDescription>
+          <DrawerTitle className="sr-only">{t("canvas.sheetTitle")}</DrawerTitle>
+          <DrawerDescription className="sr-only">{t("canvas.sheetDescription")}</DrawerDescription>
+
           <div className="min-h-0 flex-1">
             <CanvasPanel
               events={events}
