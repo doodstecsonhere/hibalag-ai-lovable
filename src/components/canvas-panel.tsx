@@ -3,6 +3,8 @@ import { useMemo } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n-context";
+import type { TranslationKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   CATEGORIES,
@@ -11,6 +13,7 @@ import {
   type Category,
   type ScheduleEvent,
 } from "@/lib/schedule";
+
 
 export type CanvasFilters = {
   date: string | null;
