@@ -41,14 +41,14 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           options: { emailRedirectTo: window.location.origin },
         });
         if (signUpError) throw signUpError;
-        setMessage("Check your email para ma-confirm ang account.");
+        setMessage(t("auth.confirm"));
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;
         onOpenChange(false);
       }
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Naay problema sa pag-login.");
+      setError(cause instanceof Error ? cause.message : t("auth.failed"));
     } finally {
       setBusy(false);
     }
