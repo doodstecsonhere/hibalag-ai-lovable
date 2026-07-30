@@ -41,6 +41,8 @@ export function ThreadDrawer({
 }: ThreadDrawerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
+  const { t } = useI18n();
+
 
   return (
     <>
@@ -60,28 +62,29 @@ export function ThreadDrawer({
         aria-label="Chat history"
       >
         <div className="flex items-center gap-2 border-b border-border/70 px-3 py-2.5">
-          <p className="font-display flex-1 text-sm font-semibold">Mga chat</p>
-          <Button size="icon" variant="ghost" onClick={onClose} aria-label="Close history">
+          <p className="font-display flex-1 text-sm font-semibold">{t("threads.title")}</p>
+          <Button size="icon" variant="ghost" onClick={onClose} aria-label={t("threads.close")}>
             <X className="size-4" />
           </Button>
         </div>
 
         <div className="p-3">
           <Button className="w-full" onClick={onNew}>
-            <Plus className="mr-1.5 size-4" /> Bag-ong chat
+            <Plus className="mr-1.5 size-4" /> {t("threads.new")}
           </Button>
         </div>
 
         {email && pendingLocalCount > 0 ? (
           <div className="mx-3 mb-3 rounded-xl border border-border bg-background p-3 text-xs">
             <p className="text-muted-foreground">
-              Naa ka'y {pendingLocalCount} guest chat dinhi sa device. I-save sa imong account?
+              {t("threads.migrateBody", { count: pendingLocalCount })}
             </p>
             <Button size="sm" variant="secondary" className="mt-2 w-full" onClick={onMigrate}>
-              <UploadCloud className="mr-1.5 size-3.5" /> I-sync sa account
+              <UploadCloud className="mr-1.5 size-3.5" /> {t("threads.migrateAction")}
             </Button>
           </div>
         ) : null}
+
 
         <div className="scrollbar-slim min-h-0 flex-1 overflow-y-auto px-2 pb-2">
           {threads.length === 0 ? (
