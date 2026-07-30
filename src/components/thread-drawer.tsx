@@ -122,7 +122,7 @@ export function ThreadDrawer({
                         />
                         <button
                           type="button"
-                          aria-label="Save title"
+                          aria-label={t("threads.save")}
                           className="rounded-md p-1.5 text-muted-foreground hover:text-foreground"
                           onClick={() => {
                             onRename(thread, draft.trim() || thread.title);
@@ -143,7 +143,7 @@ export function ThreadDrawer({
                         </button>
                         <button
                           type="button"
-                          aria-label={`Rename ${thread.title}`}
+                          aria-label={t("threads.rename", { title: thread.title })}
                           className="rounded-md p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-foreground focus-visible:opacity-100"
                           onClick={() => {
                             setEditingId(thread.id);
@@ -154,7 +154,7 @@ export function ThreadDrawer({
                         </button>
                         <button
                           type="button"
-                          aria-label={`Delete ${thread.title}`}
+                          aria-label={t("threads.delete", { title: thread.title })}
                           className="rounded-md p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive focus-visible:opacity-100"
                           onClick={() => onDelete(thread.id)}
                         >
@@ -174,12 +174,13 @@ export function ThreadDrawer({
             <div className="flex items-center gap-2">
               <p className="min-w-0 flex-1 truncate text-xs text-muted-foreground">{email}</p>
               <Button size="sm" variant="ghost" onClick={onLogout}>
-                <LogOut className="mr-1.5 size-3.5" /> Log out
+                <LogOut className="mr-1.5 size-3.5" /> {t("threads.logout")}
               </Button>
             </div>
           ) : (
             <Button size="sm" variant="outline" className="w-full" onClick={onLogin}>
-              <LogIn className="mr-1.5 size-3.5" /> Log in (optional)
+              <LogIn className="mr-1.5 size-3.5" /> {t("threads.login")}
+
             </Button>
           )}
         </div>
