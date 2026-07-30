@@ -68,25 +68,24 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle className="font-display">
-            {mode === "signin" ? "Log in sa Hibalag AI" : "Paghimo ug account"}
+            {mode === "signin" ? t("auth.signinTitle") : t("auth.signupTitle")}
           </DialogTitle>
-          <DialogDescription>
-            Optional ni — ang chat mo-gana bisan guest. Mag-login lang kung gusto nimo ma-sync ang
-            imong mga chat sa tanan nimong device.
-          </DialogDescription>
+          <DialogDescription>{t("auth.description")}</DialogDescription>
         </DialogHeader>
 
         <Button type="button" variant="outline" onClick={() => void google()}>
-          Continue with Google
+          {t("auth.google")}
         </Button>
 
         <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-          <span className="h-px flex-1 bg-border" /> o gamita ang email <span className="h-px flex-1 bg-border" />
+          <span className="h-px flex-1 bg-border" /> {t("auth.or")}{" "}
+          <span className="h-px flex-1 bg-border" />
         </div>
 
         <form onSubmit={submit} className="flex flex-col gap-3">
           <div className="grid gap-1.5">
-            <Label htmlFor="auth-email">Email</Label>
+            <Label htmlFor="auth-email">{t("auth.email")}</Label>
+
             <Input
               id="auth-email"
               type="email"
