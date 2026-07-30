@@ -18,12 +18,15 @@ import {
 const logo = "/apple-touch-icon.png";
 import {
   useInstallPrompt,
-  useLanguage,
   useOnlineStatus,
   useOptionalAuth,
   type Language,
 } from "@/hooks/use-hibalag";
+
+import { LANGUAGE_LABELS } from "@/lib/i18n";
+import { LanguageProvider, useI18n } from "@/lib/i18n-context";
 import { loadSchedule, type ScheduleEvent } from "@/lib/schedule";
+
 import { supabase } from "@/lib/supabase";
 import {
   createThreadStore,
@@ -35,12 +38,8 @@ import {
 } from "@/lib/threads";
 import { cn } from "@/lib/utils";
 
-const LANGUAGES: Array<{ value: Language; label: string; mobile: boolean }> = [
-  { value: "auto", label: "Auto", mobile: false },
-  { value: "bisaya", label: "Bisaya", mobile: true },
-  { value: "tagalog", label: "Tagalog", mobile: false },
-  { value: "english", label: "English", mobile: true },
-];
+const LANGUAGE_OPTIONS: Language[] = ["bisaya", "english", "tagalog"];
+
 
 function toUIMessages(stored: StoredMessage[]): UIMessage[] {
   return stored.map((message) => ({
@@ -56,8 +55,17 @@ function todayIso() {
 }
 
 export function HibalagApp({ threadId }: { threadId: string }) {
+  return (
+    <LanguageProvider>
+      <HibalagShell threadId={threadId} />
+    </LanguageProvider>
+  );
+}
+
+function HibalagShell({ threadId }: { threadId: string }) {
   const navigate = useNavigate();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useI18n();
+
   const online = useOnlineStatus();
   const { user, ready } = useOptionalAuth();
   const install = useInstallPrompt();
@@ -173,7 +181,7 @@ export function HibalagApp({ threadId }: { threadId: string }) {
             size="icon"
             variant="ghost"
             onClick={() => setDrawerOpen(true)}
-            aria-label="Open menu and chat history"
+            aria-label={t("header.menu")}
             className="size-11"
           >
             <Menu className="size-5" />
@@ -197,37 +205,45 @@ export function HibalagApp({ threadId }: { threadId: string }) {
               )}
             />
             <span className="truncate">
-              {online ? "Active" : "Offline mode"}
-              {user ? " · Synced" : ""}
+              {online ? t("header.status.active") : t("header.status.offline")}
+              {user ? ` · ${t("header.status.synced")}` : ""}
             </span>
           </p>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1.5">
-          <div className="flex items-center gap-0.5 rounded-full border border-border bg-background p-0.5">
-            {LANGUAGES.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setLanguage(option.value)}
-                className={cn(
-                  "min-h-9 rounded-full px-2.5 text-[11px] font-semibold transition-colors",
-                  option.mobile ? "" : "hidden sm:block",
-                  language === option.value
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent",
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+          <div
+            role="group"
+            aria-label={t("header.language")}
+            className="flex shrink-0 items-center gap-0.5 rounded-full border border-border bg-background p-0.5"
+          >
+            {LANGUAGE_OPTIONS.map((option) => {
+              const active = language === option;
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setLanguage(option)}
+                  className={cn(
+                    "min-h-10 min-w-10 rounded-full px-2 text-[11px] font-semibold transition-colors sm:min-h-11 sm:px-3",
+                    active
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-accent",
+                  )}
+                >
+                  <span className="sm:hidden">{LANGUAGE_LABELS[option].short}</span>
+                  <span className="hidden sm:inline">{LANGUAGE_LABELS[option].full}</span>
+                </button>
+              );
+            })}
           </div>
 
           <Button
             variant="secondary"
             onClick={() => setCanvasOpen(true)}
-            aria-label="Open schedule canvas"
-            className="relative size-11 rounded-full p-0 lg:hidden"
+            aria-label={t("header.schedule")}
+            className="relative size-11 shrink-0 rounded-full p-0 lg:hidden"
           >
             <CalendarRange className="size-5" />
             {liveCount > 0 ? (
@@ -237,6 +253,7 @@ export function HibalagApp({ threadId }: { threadId: string }) {
             ) : null}
           </Button>
         </div>
+
       </header>
 
       <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
@@ -272,16 +289,15 @@ export function HibalagApp({ threadId }: { threadId: string }) {
           onClick={() => setCanvasOpen(true)}
           className="fixed right-4 bottom-[calc(9rem+env(safe-area-inset-bottom))] z-40 min-h-11 rounded-full px-4 shadow-[var(--shadow-glow)] lg:hidden"
         >
-          <CalendarRange className="mr-1.5 size-4" /> View Schedule Canvas
+          <CalendarRange className="mr-1.5 size-4" /> {t("canvas.fab")}
         </Button>
       ) : null}
 
       <Drawer open={canvasOpen} onOpenChange={setCanvasOpen}>
         <DrawerContent className="h-[90dvh] lg:hidden">
-          <DrawerTitle className="sr-only">Iskedyul Canvas</DrawerTitle>
-          <DrawerDescription className="sr-only">
-            Browse and filter Founders Week events.
-          </DrawerDescription>
+          <DrawerTitle className="sr-only">{t("canvas.sheetTitle")}</DrawerTitle>
+          <DrawerDescription className="sr-only">{t("canvas.sheetDescription")}</DrawerDescription>
+
           <div className="min-h-0 flex-1">
             <CanvasPanel
               events={events}

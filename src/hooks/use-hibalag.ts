@@ -1,31 +1,16 @@
 import type { User } from "@supabase/supabase-js";
 import { useCallback, useEffect, useState } from "react";
 
+import { useI18n } from "@/lib/i18n-context";
 import { supabase } from "@/lib/supabase";
 
-export type Language = "auto" | "bisaya" | "tagalog" | "english";
-
-const LANG_KEY = "hibalag:language";
+export type { Language } from "@/lib/i18n";
 
 export function useLanguage() {
-  const [language, setLanguageState] = useState<Language>("auto");
-
-  useEffect(() => {
-    const stored = localStorage.getItem(LANG_KEY) as Language | null;
-    if (stored) setLanguageState(stored);
-  }, []);
-
-  const setLanguage = useCallback((next: Language) => {
-    setLanguageState(next);
-    try {
-      localStorage.setItem(LANG_KEY, next);
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
+  const { language, setLanguage } = useI18n();
   return { language, setLanguage };
 }
+
 
 export function useOnlineStatus() {
   const [online, setOnline] = useState(true);

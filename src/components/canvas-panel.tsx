@@ -3,6 +3,8 @@ import { useMemo } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n-context";
+import type { TranslationKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   CATEGORIES,
@@ -11,6 +13,7 @@ import {
   type Category,
   type ScheduleEvent,
 } from "@/lib/schedule";
+
 
 export type CanvasFilters = {
   date: string | null;
@@ -49,9 +52,15 @@ export function filterEvents(events: ScheduleEvent[], filters: CanvasFilters) {
   });
 }
 
+function categoryKey(category: Category): TranslationKey {
+  return `category.${category}` as TranslationKey;
+}
+
 function EventCard({ event }: { event: ScheduleEvent }) {
+  const { t } = useI18n();
   const start = formatTime(event.startTime);
   const end = formatTime(event.endTime);
+
 
   return (
     <article className="animate-rise rounded-2xl border border-border/70 bg-card p-4 shadow-[var(--shadow-elev)]">
@@ -96,7 +105,8 @@ function EventCard({ event }: { event: ScheduleEvent }) {
                 CATEGORY_STYLES[category],
               )}
             >
-              {category}
+              {t(categoryKey(category))}
+
             </span>
           ))}
         </div>
@@ -126,7 +136,9 @@ export function CanvasPanel({
   onRetry,
   onClose,
 }: CanvasPanelProps) {
+  const { t } = useI18n();
   const visible = useMemo(() => filterEvents(events, filters), [events, filters]);
+
 
   const grouped = useMemo(() => {
     const map = new Map<string, ScheduleEvent[]>();
@@ -149,21 +161,22 @@ export function CanvasPanel({
 
   return (
     <section
-      aria-label="Festival schedule canvas"
+      aria-label={t("canvas.aria")}
       className="flex h-full min-h-0 flex-col bg-surface/70"
     >
       <header className="shrink-0 border-b border-border/70 bg-card/80 px-4 py-3 backdrop-blur">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="font-display text-lg font-semibold">Schedule Canvas</h2>
+            <h2 className="font-display text-lg font-semibold">{t("canvas.title")}</h2>
             <p className="text-xs text-muted-foreground">
-              {visible.length} event{visible.length === 1 ? "" : "s"} · Aug 1–29, 2026
+              {t("canvas.count", { count: visible.length })}
             </p>
+
           </div>
           <div className="flex items-center gap-1">
             {offlineCopy ? (
               <span className="flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[11px] font-medium text-muted-foreground">
-                <WifiOff className="size-3" aria-hidden /> Offline copy
+                <WifiOff className="size-3" aria-hidden /> {t("canvas.offlineCopy")}
               </span>
             ) : null}
             {onClose ? (
@@ -171,7 +184,7 @@ export function CanvasPanel({
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                aria-label="Close canvas"
+                aria-label={t("canvas.close")}
                 className="size-11"
               >
                 <X className="size-5" />
@@ -184,7 +197,7 @@ export function CanvasPanel({
           <input
             value={filters.query}
             onChange={(event) => onFiltersChange({ ...filters, query: event.target.value })}
-            placeholder="Pangitaa ang event, venue, o org…"
+            placeholder={t("canvas.search")}
             className="min-h-11 w-full rounded-xl border border-border bg-background px-3 py-2 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
           />
         </div>
@@ -200,7 +213,7 @@ export function CanvasPanel({
                 : "border-border bg-background text-muted-foreground hover:bg-accent",
             )}
           >
-            <CalendarDays className="mr-1 inline size-3.5" aria-hidden /> All days
+            <CalendarDays className="mr-1 inline size-3.5" aria-hidden /> {t("canvas.allDays")}
           </button>
           {FESTIVAL_DAYS.map((day) => (
             <button
@@ -214,7 +227,7 @@ export function CanvasPanel({
                   : "border-border bg-background text-muted-foreground hover:bg-accent",
               )}
             >
-              Aug {Number(day.slice(-2))}
+              {t("canvas.dayChip", { day: Number(day.slice(-2)) })}
             </button>
           ))}
         </div>
@@ -236,7 +249,8 @@ export function CanvasPanel({
                     : "border-border bg-background text-muted-foreground hover:bg-accent",
                 )}
               >
-                {category}
+                {t(categoryKey(category))}
+
               </button>
             );
           })}
@@ -255,21 +269,20 @@ export function CanvasPanel({
           <div className="rounded-2xl border border-border bg-card p-5 text-center">
             <p className="text-sm text-muted-foreground">{error}</p>
             <Button className="mt-3" size="sm" onClick={onRetry}>
-              <RefreshCw className="mr-1.5 size-3.5" /> Sulayi pag-usab
+              <RefreshCw className="mr-1.5 size-3.5" /> {t("canvas.retry")}
             </Button>
           </div>
         ) : grouped.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              Walay event nga mo-match ani nga filter, bay. Sulayi ug lain nga adlaw o category.
-            </p>
+            <p className="text-sm text-muted-foreground">{t("canvas.empty")}</p>
+
           </div>
         ) : (
           grouped.map(([date, dayEvents]) => (
             <div key={date}>
               <div className="sticky top-0 z-10 -mx-1 mb-2 bg-surface/90 px-1 py-1 backdrop-blur">
                 <h3 className="font-display text-sm font-semibold tracking-wide text-primary uppercase">
-                  {date === "TBA" ? "Date TBA" : formatEventDate(date)}
+                  {date === "TBA" ? t("canvas.dateTba") : formatEventDate(date)}
                 </h3>
               </div>
               <div className="space-y-3">
@@ -284,7 +297,7 @@ export function CanvasPanel({
 
       <footer className="shrink-0 border-t border-border/70 bg-card/70 px-4 py-2">
         <Badge variant="secondary" className="text-[11px] font-medium">
-          Silliman University · Founders Day Celebration
+          {t("canvas.footer")}
         </Badge>
       </footer>
     </section>

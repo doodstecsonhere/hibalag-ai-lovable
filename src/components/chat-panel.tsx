@@ -7,21 +7,22 @@ import remarkGfm from "remark-gfm";
 
 import { Button } from "@/components/ui/button";
 import type { Language } from "@/hooks/use-hibalag";
+import { useI18n } from "@/lib/i18n-context";
+import type { TranslationKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   createThreadStore,
-  newId,
   titleFromMessage,
   type StoredMessage,
   type Thread,
 } from "@/lib/threads";
 
-const SUGGESTIONS = [
-  "Unsa'y events karong adlawa?",
-  "Naa'y open house?",
-  "When ang parade?",
-  "Alumni homecoming activities?",
-  "Ang Miss Silliman?",
+const SUGGESTION_KEYS: TranslationKey[] = [
+  "chat.suggestion1",
+  "chat.suggestion2",
+  "chat.suggestion3",
+  "chat.suggestion4",
+  "chat.suggestion5",
 ];
 
 function messageText(message: UIMessage) {
@@ -30,6 +31,7 @@ function messageText(message: UIMessage) {
     .join("")
     .trim();
 }
+
 
 type ChatPanelProps = {
   threadId: string;
@@ -51,6 +53,8 @@ export function ChatPanel({
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const store = useMemo(() => createThreadStore(userId), [userId]);
+  const { t } = useI18n();
+
 
   const { messages, sendMessage, status, error } = useChat({
     id: threadId,
@@ -96,25 +100,23 @@ export function ChatPanel({
   };
 
   return (
-    <section className="flex h-full min-h-0 flex-col" aria-label="Chat with Hibalag AI">
+    <section className="flex h-full min-h-0 flex-col" aria-label={t("chat.aria")}>
       {!online ? (
         <div className="flex items-center gap-2 bg-muted px-4 py-2 text-xs text-muted-foreground">
           <WifiOff className="size-3.5" aria-hidden />
-          Offline ka karon — mabasa gihapon ang schedule sa Canvas, pero ang chat mo-balik inig
-          signal.
+          {t("chat.offlineBanner")}
         </div>
       ) : null}
 
       <div ref={scrollRef} className="scrollbar-slim smooth-scroll-y min-h-0 flex-1 px-4 py-5">
         {messages.length === 0 ? (
           <div className="mx-auto max-w-md py-8 text-center">
-            <h1 className="font-display text-2xl font-semibold">Kumusta, Sillimanian!</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Ako si <strong>Hibalag AI</strong>...<br />
-              imong guide sa Founders Week ug Hibalag Festival karong August.<br />
-              Pangutana kabahin sa schedule, venues, o itinerary.
+            <h1 className="font-display text-2xl font-semibold">{t("chat.welcomeTitle")}</h1>
+            <p className="mt-2 text-sm whitespace-pre-line text-muted-foreground">
+              {t("chat.welcomeBody")}
             </p>
           </div>
+
         ) : (
           <div className="mx-auto flex max-w-2xl flex-col gap-4">
             {messages.map((message) => {
@@ -147,32 +149,32 @@ export function ChatPanel({
             })}
             {busy ? (
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Loader2 className="size-3.5 animate-spin" aria-hidden /> Naghuna-huna si Hibalag
-                AI…
+                <Loader2 className="size-3.5 animate-spin" aria-hidden /> {t("chat.thinking")}
               </div>
             ) : null}
-            {error ? (
-              <p className="text-xs text-destructive">
-                Naay problema sa pagtubag. Sulayi pag-usab sa makadiyot.
-              </p>
-            ) : null}
+            {error ? <p className="text-xs text-destructive">{t("chat.error")}</p> : null}
+
           </div>
         )}
       </div>
 
       <div className="shrink-0 border-t border-border/70 bg-card/80 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
         <div className="scrollbar-slim -mx-1 mb-2 flex gap-2 overflow-x-auto px-1 pb-1">
-          {SUGGESTIONS.map((suggestion) => (
-            <button
-              key={suggestion}
-              type="button"
-              disabled={busy}
-              onClick={() => submit(suggestion)}
-              className="min-h-11 shrink-0 rounded-full border border-border bg-background px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
-            >
-              {suggestion}
-            </button>
-          ))}
+          {SUGGESTION_KEYS.map((key) => {
+            const suggestion = t(key);
+            return (
+              <button
+                key={key}
+                type="button"
+                disabled={busy}
+                onClick={() => submit(suggestion)}
+                className="min-h-11 shrink-0 rounded-full border border-border bg-background px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
+              >
+                {suggestion}
+              </button>
+            );
+          })}
+
         </div>
 
         <form
@@ -192,13 +194,13 @@ export function ChatPanel({
               }
             }}
             rows={1}
-            placeholder="Pangutana bahin sa Hibalag…"
+            placeholder={t("chat.placeholder")}
             className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
           />
 
           <Button type="submit" size="icon" className="size-11 rounded-2xl" disabled={busy || !input.trim()}>
             {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" />}
-            <span className="sr-only">Send</span>
+            <span className="sr-only">{t("chat.send")}</span>
           </Button>
         </form>
       </div>

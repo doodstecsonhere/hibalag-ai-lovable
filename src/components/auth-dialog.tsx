@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useI18n } from "@/lib/i18n-context";
 import { supabase } from "@/lib/supabase";
 
 type AuthDialogProps = {
@@ -18,12 +19,14 @@ type AuthDialogProps = {
 };
 
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
+  const { t } = useI18n();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -38,14 +41,14 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           options: { emailRedirectTo: window.location.origin },
         });
         if (signUpError) throw signUpError;
-        setMessage("Check your email para ma-confirm ang account.");
+        setMessage(t("auth.confirm"));
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;
         onOpenChange(false);
       }
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Naay problema sa pag-login.");
+      setError(cause instanceof Error ? cause.message : t("auth.failed"));
     } finally {
       setBusy(false);
     }
@@ -65,25 +68,24 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle className="font-display">
-            {mode === "signin" ? "Log in sa Hibalag AI" : "Paghimo ug account"}
+            {mode === "signin" ? t("auth.signinTitle") : t("auth.signupTitle")}
           </DialogTitle>
-          <DialogDescription>
-            Optional ni — ang chat mo-gana bisan guest. Mag-login lang kung gusto nimo ma-sync ang
-            imong mga chat sa tanan nimong device.
-          </DialogDescription>
+          <DialogDescription>{t("auth.description")}</DialogDescription>
         </DialogHeader>
 
         <Button type="button" variant="outline" onClick={() => void google()}>
-          Continue with Google
+          {t("auth.google")}
         </Button>
 
         <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
-          <span className="h-px flex-1 bg-border" /> o gamita ang email <span className="h-px flex-1 bg-border" />
+          <span className="h-px flex-1 bg-border" /> {t("auth.or")}{" "}
+          <span className="h-px flex-1 bg-border" />
         </div>
 
         <form onSubmit={submit} className="flex flex-col gap-3">
           <div className="grid gap-1.5">
-            <Label htmlFor="auth-email">Email</Label>
+            <Label htmlFor="auth-email">{t("auth.email")}</Label>
+
             <Input
               id="auth-email"
               type="email"
@@ -94,7 +96,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             />
           </div>
           <div className="grid gap-1.5">
-            <Label htmlFor="auth-password">Password</Label>
+            <Label htmlFor="auth-password">{t("auth.password")}</Label>
             <Input
               id="auth-password"
               type="password"
@@ -110,7 +112,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           {message ? <p className="text-xs text-muted-foreground">{message}</p> : null}
 
           <Button type="submit" disabled={busy}>
-            {mode === "signin" ? "Log in" : "Sign up"}
+            {mode === "signin" ? t("auth.signin") : t("auth.signup")}
           </Button>
         </form>
 
@@ -119,7 +121,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
           className="text-xs text-muted-foreground underline-offset-4 hover:underline"
         >
-          {mode === "signin" ? "Wala pa'y account? Sign up" : "Naa na'y account? Log in"}
+          {mode === "signin" ? t("auth.toSignup") : t("auth.toSignin")}
         </button>
       </DialogContent>
     </Dialog>
