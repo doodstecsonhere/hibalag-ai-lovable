@@ -181,7 +181,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
             size="icon"
             variant="ghost"
             onClick={() => setDrawerOpen(true)}
-            aria-label="Open menu and chat history"
+            aria-label={t("header.menu")}
             className="size-11"
           >
             <Menu className="size-5" />
@@ -205,37 +205,45 @@ function HibalagShell({ threadId }: { threadId: string }) {
               )}
             />
             <span className="truncate">
-              {online ? "Active" : "Offline mode"}
-              {user ? " · Synced" : ""}
+              {online ? t("header.status.active") : t("header.status.offline")}
+              {user ? ` · ${t("header.status.synced")}` : ""}
             </span>
           </p>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1.5">
-          <div className="flex items-center gap-0.5 rounded-full border border-border bg-background p-0.5">
-            {LANGUAGES.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setLanguage(option.value)}
-                className={cn(
-                  "min-h-9 rounded-full px-2.5 text-[11px] font-semibold transition-colors",
-                  option.mobile ? "" : "hidden sm:block",
-                  language === option.value
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent",
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+          <div
+            role="group"
+            aria-label={t("header.language")}
+            className="flex shrink-0 items-center gap-0.5 rounded-full border border-border bg-background p-0.5"
+          >
+            {LANGUAGE_OPTIONS.map((option) => {
+              const active = language === option;
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setLanguage(option)}
+                  className={cn(
+                    "min-h-10 min-w-10 rounded-full px-2 text-[11px] font-semibold transition-colors sm:min-h-11 sm:px-3",
+                    active
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-accent",
+                  )}
+                >
+                  <span className="sm:hidden">{LANGUAGE_LABELS[option].short}</span>
+                  <span className="hidden sm:inline">{LANGUAGE_LABELS[option].full}</span>
+                </button>
+              );
+            })}
           </div>
 
           <Button
             variant="secondary"
             onClick={() => setCanvasOpen(true)}
-            aria-label="Open schedule canvas"
-            className="relative size-11 rounded-full p-0 lg:hidden"
+            aria-label={t("header.schedule")}
+            className="relative size-11 shrink-0 rounded-full p-0 lg:hidden"
           >
             <CalendarRange className="size-5" />
             {liveCount > 0 ? (
@@ -245,6 +253,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
             ) : null}
           </Button>
         </div>
+
       </header>
 
       <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
