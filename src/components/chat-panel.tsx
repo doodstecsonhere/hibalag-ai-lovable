@@ -194,13 +194,13 @@ export function ChatPanel({
               }
             }}
             rows={1}
-            placeholder="Pangutana bahin sa Hibalag…"
+            placeholder={t("chat.placeholder")}
             className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
           />
 
           <Button type="submit" size="icon" className="size-11 rounded-2xl" disabled={busy || !input.trim()}>
             {busy ? <Loader2 className="size-4 animate-spin" /> : <ArrowUp className="size-4" />}
-            <span className="sr-only">Send</span>
+            <span className="sr-only">{t("chat.send")}</span>
           </Button>
         </form>
       </div>
