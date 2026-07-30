@@ -53,6 +53,8 @@ export function ChatPanel({
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const store = useMemo(() => createThreadStore(userId), [userId]);
+  const { t } = useI18n();
+
 
   const { messages, sendMessage, status, error } = useChat({
     id: threadId,
