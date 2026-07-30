@@ -89,8 +89,9 @@ export function ThreadDrawer({
         <div className="scrollbar-slim min-h-0 flex-1 overflow-y-auto px-2 pb-2">
           {threads.length === 0 ? (
             <p className="px-2 py-6 text-center text-xs text-muted-foreground">
-              Wala pa'y chat. Sugdi ug pangutana!
+              {t("threads.empty")}
             </p>
+
           ) : (
             <ul className="flex flex-col gap-1">
               {threads.map((thread) => {
