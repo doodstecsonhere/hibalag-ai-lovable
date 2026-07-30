@@ -23,7 +23,10 @@ import {
   useOptionalAuth,
   type Language,
 } from "@/hooks/use-hibalag";
+import { LANGUAGE_LABELS } from "@/lib/i18n";
+import { LanguageProvider, useI18n } from "@/lib/i18n-context";
 import { loadSchedule, type ScheduleEvent } from "@/lib/schedule";
+
 import { supabase } from "@/lib/supabase";
 import {
   createThreadStore,
@@ -52,8 +55,17 @@ function todayIso() {
 }
 
 export function HibalagApp({ threadId }: { threadId: string }) {
+  return (
+    <LanguageProvider>
+      <HibalagShell threadId={threadId} />
+    </LanguageProvider>
+  );
+}
+
+function HibalagShell({ threadId }: { threadId: string }) {
   const navigate = useNavigate();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useI18n();
+
   const online = useOnlineStatus();
   const { user, ready } = useOptionalAuth();
   const install = useInstallPrompt();
