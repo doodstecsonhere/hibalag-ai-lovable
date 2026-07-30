@@ -136,7 +136,9 @@ export function CanvasPanel({
   onRetry,
   onClose,
 }: CanvasPanelProps) {
+  const { t } = useI18n();
   const visible = useMemo(() => filterEvents(events, filters), [events, filters]);
+
 
   const grouped = useMemo(() => {
     const map = new Map<string, ScheduleEvent[]>();
