@@ -7,21 +7,22 @@ import remarkGfm from "remark-gfm";
 
 import { Button } from "@/components/ui/button";
 import type { Language } from "@/hooks/use-hibalag";
+import { useI18n } from "@/lib/i18n-context";
+import type { TranslationKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
   createThreadStore,
-  newId,
   titleFromMessage,
   type StoredMessage,
   type Thread,
 } from "@/lib/threads";
 
-const SUGGESTIONS = [
-  "Unsa'y events karong adlawa?",
-  "Naa'y open house?",
-  "When ang parade?",
-  "Alumni homecoming activities?",
-  "Ang Miss Silliman?",
+const SUGGESTION_KEYS: TranslationKey[] = [
+  "chat.suggestion1",
+  "chat.suggestion2",
+  "chat.suggestion3",
+  "chat.suggestion4",
+  "chat.suggestion5",
 ];
 
 function messageText(message: UIMessage) {
@@ -30,6 +31,7 @@ function messageText(message: UIMessage) {
     .join("")
     .trim();
 }
+
 
 type ChatPanelProps = {
   threadId: string;
