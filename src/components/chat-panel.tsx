@@ -160,17 +160,21 @@ export function ChatPanel({
 
       <div className="shrink-0 border-t border-border/70 bg-card/80 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur">
         <div className="scrollbar-slim -mx-1 mb-2 flex gap-2 overflow-x-auto px-1 pb-1">
-          {SUGGESTIONS.map((suggestion) => (
-            <button
-              key={suggestion}
-              type="button"
-              disabled={busy}
-              onClick={() => submit(suggestion)}
-              className="min-h-11 shrink-0 rounded-full border border-border bg-background px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
-            >
-              {suggestion}
-            </button>
-          ))}
+          {SUGGESTION_KEYS.map((key) => {
+            const suggestion = t(key);
+            return (
+              <button
+                key={key}
+                type="button"
+                disabled={busy}
+                onClick={() => submit(suggestion)}
+                className="min-h-11 shrink-0 rounded-full border border-border bg-background px-4 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent disabled:opacity-50"
+              >
+                {suggestion}
+              </button>
+            );
+          })}
+
         </div>
 
         <form
