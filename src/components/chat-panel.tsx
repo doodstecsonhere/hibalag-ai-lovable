@@ -149,15 +149,11 @@ export function ChatPanel({
             })}
             {busy ? (
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Loader2 className="size-3.5 animate-spin" aria-hidden /> Naghuna-huna si Hibalag
-                AI…
+                <Loader2 className="size-3.5 animate-spin" aria-hidden /> {t("chat.thinking")}
               </div>
             ) : null}
-            {error ? (
-              <p className="text-xs text-destructive">
-                Naay problema sa pagtubag. Sulayi pag-usab sa makadiyot.
-              </p>
-            ) : null}
+            {error ? <p className="text-xs text-destructive">{t("chat.error")}</p> : null}
+
           </div>
         )}
       </div>
