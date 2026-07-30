@@ -105,7 +105,8 @@ function EventCard({ event }: { event: ScheduleEvent }) {
                 CATEGORY_STYLES[category],
               )}
             >
-              {category}
+              {t(categoryKey(category))}
+
             </span>
           ))}
         </div>
