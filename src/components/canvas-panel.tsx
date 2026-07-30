@@ -161,21 +161,22 @@ export function CanvasPanel({
 
   return (
     <section
-      aria-label="Festival schedule canvas"
+      aria-label={t("canvas.aria")}
       className="flex h-full min-h-0 flex-col bg-surface/70"
     >
       <header className="shrink-0 border-b border-border/70 bg-card/80 px-4 py-3 backdrop-blur">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="font-display text-lg font-semibold">Schedule Canvas</h2>
+            <h2 className="font-display text-lg font-semibold">{t("canvas.title")}</h2>
             <p className="text-xs text-muted-foreground">
-              {visible.length} event{visible.length === 1 ? "" : "s"} · Aug 1–29, 2026
+              {t("canvas.count", { count: visible.length })}
             </p>
+
           </div>
           <div className="flex items-center gap-1">
             {offlineCopy ? (
               <span className="flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-[11px] font-medium text-muted-foreground">
-                <WifiOff className="size-3" aria-hidden /> Offline copy
+                <WifiOff className="size-3" aria-hidden /> {t("canvas.offlineCopy")}
               </span>
             ) : null}
             {onClose ? (
@@ -183,7 +184,7 @@ export function CanvasPanel({
                 variant="ghost"
                 size="icon"
                 onClick={onClose}
-                aria-label="Close canvas"
+                aria-label={t("canvas.close")}
                 className="size-11"
               >
                 <X className="size-5" />
@@ -196,7 +197,7 @@ export function CanvasPanel({
           <input
             value={filters.query}
             onChange={(event) => onFiltersChange({ ...filters, query: event.target.value })}
-            placeholder="Pangitaa ang event, venue, o org…"
+            placeholder={t("canvas.search")}
             className="min-h-11 w-full rounded-xl border border-border bg-background px-3 py-2 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
           />
         </div>
@@ -212,7 +213,7 @@ export function CanvasPanel({
                 : "border-border bg-background text-muted-foreground hover:bg-accent",
             )}
           >
-            <CalendarDays className="mr-1 inline size-3.5" aria-hidden /> All days
+            <CalendarDays className="mr-1 inline size-3.5" aria-hidden /> {t("canvas.allDays")}
           </button>
           {FESTIVAL_DAYS.map((day) => (
             <button
@@ -226,7 +227,7 @@ export function CanvasPanel({
                   : "border-border bg-background text-muted-foreground hover:bg-accent",
               )}
             >
-              Aug {Number(day.slice(-2))}
+              {t("canvas.dayChip", { day: Number(day.slice(-2)) })}
             </button>
           ))}
         </div>
@@ -248,7 +249,8 @@ export function CanvasPanel({
                     : "border-border bg-background text-muted-foreground hover:bg-accent",
                 )}
               >
-                {category}
+                {t(categoryKey(category))}
+
               </button>
             );
           })}
