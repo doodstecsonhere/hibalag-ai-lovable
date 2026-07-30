@@ -52,9 +52,15 @@ export function filterEvents(events: ScheduleEvent[], filters: CanvasFilters) {
   });
 }
 
+function categoryKey(category: Category): TranslationKey {
+  return `category.${category}` as TranslationKey;
+}
+
 function EventCard({ event }: { event: ScheduleEvent }) {
+  const { t } = useI18n();
   const start = formatTime(event.startTime);
   const end = formatTime(event.endTime);
+
 
   return (
     <article className="animate-rise rounded-2xl border border-border/70 bg-card p-4 shadow-[var(--shadow-elev)]">
