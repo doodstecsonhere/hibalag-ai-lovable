@@ -96,7 +96,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
             />
           </div>
           <div className="grid gap-1.5">
-            <Label htmlFor="auth-password">Password</Label>
+            <Label htmlFor="auth-password">{t("auth.password")}</Label>
             <Input
               id="auth-password"
               type="password"
@@ -112,7 +112,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           {message ? <p className="text-xs text-muted-foreground">{message}</p> : null}
 
           <Button type="submit" disabled={busy}>
-            {mode === "signin" ? "Log in" : "Sign up"}
+            {mode === "signin" ? t("auth.signinAction") : t("auth.signupAction")}
           </Button>
         </form>
 
@@ -121,7 +121,7 @@ export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
           className="text-xs text-muted-foreground underline-offset-4 hover:underline"
         >
-          {mode === "signin" ? "Wala pa'y account? Sign up" : "Naa na'y account? Log in"}
+          {mode === "signin" ? t("auth.toSignup") : t("auth.toSignin")}
         </button>
       </DialogContent>
     </Dialog>
