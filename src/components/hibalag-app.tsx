@@ -175,6 +175,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
 
   return (
     <div className="festive-grain flex h-dvh flex-col bg-background pt-[env(safe-area-inset-top)]">
+      <h1 className="sr-only">Hibalag AI: Silliman Founders Week Guide</h1>
       <header className="z-20 grid shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-border/70 bg-card/85 px-2 py-1.5 backdrop-blur sm:px-3 sm:py-2">
         <div className="flex items-center gap-1">
           <Button

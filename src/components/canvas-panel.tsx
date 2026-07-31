@@ -197,6 +197,8 @@ export function CanvasPanel({
           <input
             value={filters.query}
             onChange={(event) => onFiltersChange({ ...filters, query: event.target.value })}
+            type="search"
+            aria-label={t("canvas.search")}
             placeholder={t("canvas.search")}
             className="min-h-11 w-full rounded-xl border border-border bg-background px-3 py-2 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
           />

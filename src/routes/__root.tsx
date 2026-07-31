@@ -111,6 +111,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Silliman University",
+          url: "https://hibalag-ai.lovable.app/",
+          sameAs: ["https://su.edu.ph/"],
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
