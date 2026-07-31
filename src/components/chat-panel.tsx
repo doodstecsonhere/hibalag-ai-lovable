@@ -111,7 +111,7 @@ export function ChatPanel({
       <div ref={scrollRef} className="scrollbar-slim smooth-scroll-y min-h-0 flex-1 px-4 py-5">
         {messages.length === 0 ? (
           <div className="mx-auto max-w-md py-8 text-center">
-            <h1 className="font-display text-2xl font-semibold">{t("chat.welcomeTitle")}</h1>
+            <h2 className="font-display text-2xl font-semibold">{t("chat.welcomeTitle")}</h2>
             <p className="mt-2 text-sm whitespace-pre-line text-muted-foreground">
               {t("chat.welcomeBody")}
             </p>
@@ -194,6 +194,7 @@ export function ChatPanel({
               }
             }}
             rows={1}
+            aria-label={t("chat.placeholder")}
             placeholder={t("chat.placeholder")}
             className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:text-sm"
           />
