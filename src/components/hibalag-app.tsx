@@ -192,6 +192,8 @@ function HibalagShell({ threadId }: { threadId: string }) {
             alt="Hibalag AI"
             width={36}
             height={36}
+            decoding="async"
+            fetchPriority="high"
             className="hidden size-9 shrink-0 rounded-xl sm:block"
           />
         </div>
