@@ -1,0 +1,15 @@
+# Hibalag AI
+
+> A Bisaya-speaking AI guide to Silliman University's Founders Week and the Hibalag Festival in August 2026 — schedule, venues, and itineraries.
+
+Hibalag AI answers questions about the official Founders Day / Hibalag Festival
+schedule in Bisaya, Tagalog, or English, and renders the schedule as a filterable
+canvas by date and category (Featured, Religious, Alumni, Cultural, Parties).
+
+## Pages
+
+- [Hibalag AI](/): Chat with the festival guide and browse the interactive schedule canvas.
+
+## Optional
+
+- [MCP server](/mcp): Public Model Context Protocol endpoint exposing read-only festival schedule tools (`list_events`, `get_event`, `list_event_dates`).
