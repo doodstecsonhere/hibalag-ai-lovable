@@ -1,7 +1,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { ArrowUp, Loader2, WifiOff } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowUp, Loader2, Zap } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import type { Language } from "@/hooks/use-hibalag";
 import { useI18n } from "@/lib/i18n-context";
 import type { TranslationKey } from "@/lib/i18n";
+import { answerOffline, type OfflineFilters } from "@/lib/offline-ai";
 import { cn } from "@/lib/utils";
 import {
   createThreadStore,
@@ -32,6 +33,9 @@ function messageText(message: UIMessage) {
     .trim();
 }
 
+function textMessage(id: string, role: "user" | "assistant", text: string): UIMessage {
+  return { id, role, parts: [{ type: "text", text }] } as UIMessage;
+}
 
 type ChatPanelProps = {
   threadId: string;
@@ -40,6 +44,7 @@ type ChatPanelProps = {
   online: boolean;
   userId: string | null;
   onThreadSaved: () => void;
+  onOfflineMatch?: (filters: OfflineFilters) => void;
 };
 
 export function ChatPanel({
@@ -49,12 +54,17 @@ export function ChatPanel({
   online,
   userId,
   onThreadSaved,
+  onOfflineMatch,
 }: ChatPanelProps) {
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const store = useMemo(() => createThreadStore(userId), [userId]);
   const { t } = useI18n();
 
+  const [offlineMessages, setOfflineMessages] = useState<UIMessage[]>([]);
+  const [offlineBusy, setOfflineBusy] = useState(false);
+  const lastQueryRef = useRef("");
+  const handledErrorRef = useRef<unknown>(null);
 
   const { messages, sendMessage, status, error } = useChat({
     id: threadId,
@@ -65,15 +75,19 @@ export function ChatPanel({
     }),
   });
 
-  const busy = status === "submitted" || status === "streaming";
+  const busy = status === "submitted" || status === "streaming" || offlineBusy;
+  const allMessages = useMemo(
+    () => [...messages, ...offlineMessages],
+    [messages, offlineMessages],
+  );
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, busy]);
+  }, [allMessages, busy]);
 
   useEffect(() => {
-    if (busy || messages.length === 0) return;
-    const stored: StoredMessage[] = messages.map((message, index) => ({
+    if (busy || allMessages.length === 0) return;
+    const stored: StoredMessage[] = allMessages.map((message, index) => ({
       id: message.id ?? `${threadId}-${index}`,
       role: message.role === "assistant" ? "assistant" : "user",
       content: messageText(message),
@@ -90,36 +104,92 @@ export function ChatPanel({
       .save(thread, stored)
       .then(onThreadSaved)
       .catch(() => undefined);
-  }, [messages, busy, store, threadId, onThreadSaved]);
+  }, [allMessages, busy, store, threadId, onThreadSaved]);
+
+  /** Generates and "streams" a grounded reply from the cached schedule, locally. */
+  const runOffline = useCallback(
+    async (value: string, includeUser: boolean) => {
+      const stamp = Date.now();
+      const assistantId = `off-a-${stamp}`;
+      setOfflineBusy(true);
+      setOfflineMessages((prev) => [
+        ...prev,
+        ...(includeUser ? [textMessage(`off-u-${stamp}`, "user", value)] : []),
+        textMessage(assistantId, "assistant", ""),
+      ]);
+
+      let result;
+      try {
+        result = await answerOffline(value, language);
+      } catch {
+        result = { text: t("offline.noCache"), events: [], filters: null };
+      }
+
+      if (result.filters) onOfflineMatch?.(result.filters);
+
+      const chunks = result.text.split(/(\s+)/);
+      let acc = "";
+      for (let index = 0; index < chunks.length; index += 1) {
+        acc += chunks[index];
+        const snapshot = acc;
+        setOfflineMessages((prev) =>
+          prev.map((message) =>
+            message.id === assistantId ? textMessage(assistantId, "assistant", snapshot) : message,
+          ),
+        );
+        if (index % 4 === 0) await new Promise((resolve) => setTimeout(resolve, 18));
+      }
+
+      setOfflineBusy(false);
+    },
+    [language, onOfflineMatch, t],
+  );
+
+  // If the live gateway fails while "online", degrade to the cached answer
+  // instead of leaving the user on a dead end.
+  useEffect(() => {
+    if (!error || handledErrorRef.current === error || !lastQueryRef.current) return;
+    handledErrorRef.current = error;
+    void runOffline(lastQueryRef.current, false);
+  }, [error, runOffline]);
 
   const submit = (text: string) => {
     const value = text.trim();
     if (!value || busy) return;
     setInput("");
+    lastQueryRef.current = value;
+
+    const isOffline = typeof navigator !== "undefined" && navigator.onLine === false;
+    if (isOffline) {
+      void runOffline(value, true);
+      return;
+    }
     void sendMessage({ text: value });
   };
 
   return (
     <section className="flex h-full min-h-0 flex-col" aria-label={t("chat.aria")}>
       {!online ? (
-        <div className="flex items-center gap-2 bg-muted px-4 py-2 text-xs text-muted-foreground">
-          <WifiOff className="size-3.5" aria-hidden />
-          {t("chat.offlineBanner")}
+        <div
+          role="status"
+          className="flex items-center gap-2 bg-muted px-4 py-2 text-xs text-muted-foreground"
+        >
+          <Zap className="size-3.5 shrink-0" aria-hidden />
+          <span className="truncate">{t("offline.banner")}</span>
         </div>
       ) : null}
 
       <div ref={scrollRef} className="scrollbar-slim smooth-scroll-y min-h-0 flex-1 px-4 py-5">
-        {messages.length === 0 ? (
+        {allMessages.length === 0 ? (
           <div className="mx-auto max-w-md py-8 text-center">
             <h2 className="font-display text-2xl font-semibold">{t("chat.welcomeTitle")}</h2>
             <p className="mt-2 text-sm whitespace-pre-line text-muted-foreground">
               {t("chat.welcomeBody")}
             </p>
           </div>
-
         ) : (
           <div className="mx-auto flex max-w-2xl flex-col gap-4">
-            {messages.map((message) => {
+            {allMessages.map((message) => {
               const isUser = message.role === "user";
               return (
                 <div
@@ -152,8 +222,6 @@ export function ChatPanel({
                 <Loader2 className="size-3.5 animate-spin" aria-hidden /> {t("chat.thinking")}
               </div>
             ) : null}
-            {error ? <p className="text-xs text-destructive">{t("chat.error")}</p> : null}
-
           </div>
         )}
       </div>
@@ -174,7 +242,6 @@ export function ChatPanel({
               </button>
             );
           })}
-
         </div>
 
         <form
