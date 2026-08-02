@@ -1,42 +1,33 @@
 ## Goal
+Make Hibalag AI fully usable with no connection: chat still answers (from the cached schedule), refreshing any route never hits the browser's offline error page, and the app switches back to the live AI automatically when the network returns.
 
-Every piece of interface text in Hibalag AI switches instantly between Bisaya, English, and Tagalog, the mobile toggle offers all three, and the AI answers in the selected language. Fetched schedule content stays untouched.
+## 1. Offline answer engine — `src/lib/offline-ai.ts` (new)
+- Read the cached schedule markdown via the existing `readCachedSchedule()` + `parseSchedule()` in `src/lib/schedule.ts` (IndexedDB with localStorage fallback — already implemented).
+- Intent/keyword matcher over parsed events:
+  - normalize the query (lowercase, strip punctuation/diacritics, drop Bisaya/Tagalog/English stop words);
+  - score events on title, venue, lead unit, description, category names, and date/day mentions ("today", "karon", "Aug 21", "Agosto 21", weekday names);
+  - detect category intent (Featured / Religious / Alumni / Cultural / Parties) and date intent so the result can also drive canvas filters;
+  - return `{ events, filters: { date, categories, query } }`, top ~6 events.
+- Answer builder: composes a persona-consistent reply in the active language (Bisaya / English / Tagalog) with an offline preamble, a markdown list of matches (title, date, time, venue), and a closing nudge to the Schedule Canvas. New i18n keys added to all three dictionaries in `src/lib/i18n.ts` — no schedule text is translated.
+- No-match path: friendly localized fallback pointing at the Canvas.
 
-## 1. Translation layer
+## 2. Chat panel behaves offline — `src/components/chat-panel.tsx`
+- Composer, suggestion chips, and send button stay enabled at all times (no `online` gating).
+- On submit, branch: if `navigator.onLine === false`, do **not** call `sendMessage` (so `/api/chat` is never hit). Instead append the user message and an assistant message locally to a small local message overlay, streaming the generated text in word-chunks on a timer for a live feel.
+  - Implementation detail: keep a `localMessages` state merged after `useChat` messages, and reuse the existing persistence effect so offline turns are still saved to the thread store (localStorage for guests, Supabase when signed in — Supabase writes are skipped while offline and simply resume later).
+- Replace the current offline banner with the subtle top strip: "⚡ Offline Mode — Answers generated from cached schedule data." (localized).
+- Also handle the online-but-request-failed case by falling back to the offline answer rather than showing a dead-end error.
 
-New `src/lib/i18n.ts`:
-- A typed dictionary `translations: Record<Language, Record<TranslationKey, string>>` where keys are derived from the Bisaya dictionary, so a missing key in English/Tagalog is a compile error.
-- Supports simple interpolation (`{count}`, `{name}`) for strings like "3 events · Aug 1–29, 2026" and "You have {count} guest chats".
-- `Language` type narrows to `"bisaya" | "english" | "tagalog"`. The current `"auto"` option is dropped — the toggle now always states an explicit language (stored value `auto` migrates to `bisaya` on read).
+## 3. Canvas sync + reconnect toast — `src/components/hibalag-app.tsx`
+- Pass an `onOfflineMatch(filters)` callback into `ChatPanel`; when an offline answer is produced, set the canvas `filters` state so the desktop panel and mobile bottom sheet immediately show matching events (mobile: also open the sheet if the user is on a small screen? — plan: do **not** auto-open, just update filters and let the badge/FAB reflect it, so the chat isn't covered).
+- Mount `<Toaster />` (sonner) once in `src/routes/__root.tsx`; in the online-status hook (`src/hooks/use-hibalag.ts`) fire a toast "Back online! Live AI reconnected." on the `online` event only after having been offline. Live gateway resumes automatically because the branch is evaluated per-send — no reload.
 
-New `src/lib/i18n-context.tsx`:
-- `LanguageProvider` holding the active language (persisted in `localStorage` under the existing `hibalag:language` key) plus a `useI18n()` hook returning `{ language, setLanguage, t }`.
-- Provider mounted in `src/components/hibalag-app.tsx` around the whole app shell, so a toggle change re-renders every consumer immediately.
-- `useLanguage` in `src/hooks/use-hibalag.ts` becomes a thin re-export of the context hook so existing call sites keep working.
+## 4. Service worker / app-shell fallback — `vite.config.ts`
+- Precache the app shell HTML and add `navigateFallback: "/index.html"` with `navigateFallbackAllowlist` covering `/` and `/chat/*`, keeping the existing denylist for `/~oauth`, `/api/`, `/_serverFn/`.
+- Keep NetworkFirst for navigations but give it a cached-shell fallback so an offline reload of `/chat/abc` renders the app instead of the dinosaur page; keep CacheFirst for hashed same-origin assets and StaleWhileRevalidate for the `schedule_context` REST call.
+- Verify the built `dist` output actually contains a precacheable HTML shell for this TanStack Start setup; if prerendering doesn't emit one, add a minimal prerendered `/` entry so the fallback has something to serve.
 
-## 2. Strings to translate
-
-All hardcoded copy moves to dictionary keys in these files:
-- `hibalag-app.tsx` — status pill ("Active" / "Offline mode" / "Synced"), menu and schedule button aria-labels, floating "View Schedule Canvas" chip, drawer titles.
-- `chat-panel.tsx` — welcome heading and intro paragraph, offline banner, typing indicator, error line, composer placeholder, send aria-label, and the five suggestion chips (each written natively per language, not machine-translated).
-- `canvas-panel.tsx` — "Schedule Canvas" heading, event count line, "Offline copy", search placeholder, "All days" / "Aug N" day chips, category filter labels, empty-filter and error states, retry button, footer badge.
-- `thread-drawer.tsx` — "Mga chat", "Bag-ong chat", empty history line, guest-sync prompt and button, rename/delete/save aria-labels, "Log in (optional)" / "Log out".
-- `auth-dialog.tsx` and `install-prompt.tsx` — titles, descriptions, buttons, validation and error messages.
-
-**Schedule data exception:** category *filter labels* are translated for display only via a lookup keyed by the canonical English `Category` value; the underlying `Category` union, filter/matching logic in `src/lib/schedule.ts`, and every event title, time, venue, lead unit, and description render exactly as parsed from Supabase. Date headers keep using `formatEventDate` (locale-neutral English month names) so they match the source data.
-
-## 3. Mobile language selector
-
-- Remove the `mobile: boolean` flag and the `hidden sm:block` conditional in `hibalag-app.tsx` that hides Tagalog under 768px.
-- Replace with a compact 3-way segmented pill (`Bis` / `Eng` / `Tag` short labels under `sm`, full names from `sm` up), each segment ≥44px tall with a 44px minimum hit area, `aria-pressed` on the active option.
-- Header grid stays `auto / 1fr / auto`; the title column already has `min-w-0 truncate`, and the segmented control gets `shrink-0` plus tightened padding so the header holds at 360px without clipping. Verified with Playwright at 360px and 393px.
-
-## 4. AI system prompt sync
-
-- `chat-panel.tsx` already sends `language` in the transport body; the transport is recreated on language change so the new value is sent from the very next message.
-- In `src/routes/api/chat.ts`, drop the `auto` branch from `languageRule` and make each of the three explicit rules stronger: Bisaya = contemporary Dumaguete Bisaya-English mix, English = warm casual English, Tagalog = conversational Taglish — always overriding the language the user typed in. The persona, grounding rules, and schedule injection are unchanged.
-- Also localize the assistant's UI-facing pointer ("full breakdown is in the Canvas panel") wording per language inside the prompt.
-
-## Verification
-
-Playwright run at 360px and 393px: switch through all three languages, confirm header, chat empty state, suggestion chips, drawer, and bottom-sheet canvas all change text, no horizontal overflow, and event card content stays identical across languages.
+## Technical notes
+- Nothing new is installed; `sonner`, `idb-keyval`, and `vite-plugin-pwa` are already in the project.
+- The offline engine is pure client code with no network access, so it cannot leak keys or hit the gateway.
+- Verification: production build + Playwright with the browser context set offline — send a query, confirm an answer renders and no `/api/chat` request is made, then reload `/chat/<id>` offline and confirm the app shell loads.

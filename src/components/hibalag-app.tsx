@@ -1,7 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { UIMessage } from "ai";
 import { CalendarRange, Menu } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { AuthDialog } from "@/components/auth-dialog";
 import { CanvasPanel, type CanvasFilters } from "@/components/canvas-panel";
@@ -132,6 +133,20 @@ function HibalagShell({ threadId }: { threadId: string }) {
   }, []);
 
   useEffect(refresh, [refresh]);
+
+  // Reconnection: announce the live gateway coming back without a reload.
+  const wasOffline = useRef(false);
+  useEffect(() => {
+    if (!online) {
+      wasOffline.current = true;
+      return;
+    }
+    if (wasOffline.current) {
+      wasOffline.current = false;
+      toast.success(t("offline.reconnected"));
+      refresh();
+    }
+  }, [online, t, refresh]);
 
   const liveCount = useMemo(() => {
     const iso = todayIso();
@@ -270,6 +285,13 @@ function HibalagShell({ threadId }: { threadId: string }) {
               online={online}
               userId={user?.id ?? null}
               onThreadSaved={refreshThreads}
+              onOfflineMatch={(next) =>
+                setFilters({
+                  date: next.date,
+                  categories: next.categories,
+                  query: next.query,
+                })
+              }
             />
           ) : null}
         </div>

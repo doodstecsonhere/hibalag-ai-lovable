@@ -24,6 +24,9 @@ export default defineConfig({
         injectRegister: null,
         devOptions: { enabled: false },
         filename: "sw.js",
+        // TanStack Start emits the browser build into dist/client; without this the
+        // worker and its precache manifest land in the wrong directory.
+        outDir: "dist/client",
         manifest: {
           id: "/",
           name: "Hibalag AI — Silliman Founders Day 2026",
@@ -50,8 +53,9 @@ export default defineConfig({
         },
         workbox: {
           globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
-          navigateFallback: "/",
-          navigateFallbackDenylist: [/^\/~oauth/, /^\/api\//, /^\/_serverFn\//],
+          // No prerendered HTML exists to precache (SSR), so navigations are
+          // handled by the NetworkFirst route below with an app-shell fallback.
+          navigateFallback: undefined,
           cleanupOutdatedCaches: true,
           clientsClaim: true,
           skipWaiting: true,
@@ -64,6 +68,20 @@ export default defineConfig({
                 cacheName: "hibalag-pages",
                 networkTimeoutSeconds: 4,
                 expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 * 7 },
+                plugins: [
+                  {
+                    // Offline navigation to any route falls back to the cached
+                    // app shell so the SPA router can render it locally.
+                    handlerDidError: async () => {
+                      const cache = await caches.open("hibalag-pages");
+                      return (
+                        (await cache.match("/", { ignoreSearch: true })) ??
+                        (await cache.match(new Request("/"), { ignoreSearch: true })) ??
+                        Response.error()
+                      );
+                    },
+                  },
+                ],
               },
             },
             {
