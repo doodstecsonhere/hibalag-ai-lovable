@@ -117,7 +117,11 @@ export function detectCategories(query: string): Category[] {
   return CATEGORIES.filter((category) => CATEGORY_HINTS[category].test(query));
 }
 
-function scoreEvent(event: ScheduleEvent, words: string[], categories: Category[]) {
+function scoreEvent(
+  event: ScheduleEvent,
+  words: string[],
+  categories: Category[],
+): { keyword: number; total: number } {
   const title = normalize(event.title);
   const venue = normalize(event.venue ?? "");
   const lead = normalize(event.leadUnit ?? "");
@@ -130,8 +134,9 @@ function scoreEvent(event: ScheduleEvent, words: string[], categories: Category[
     else if (lead.includes(word)) score += 2;
     else if (body.includes(word)) score += 1;
   }
+  const keyword = score;
   if (categories.length > 0 && categories.some((c) => event.categories.includes(c))) score += 3;
-  return score;
+  return { keyword, total: score };
 }
 
 /** Pure matcher — exported for reuse/testing. */
@@ -147,9 +152,11 @@ export function matchEvents(
   const base = pool.length > 0 ? pool : events;
 
   const scored = base
-    .map((event) => ({ event, score: scoreEvent(event, words, categories) }))
-    .filter((entry) => entry.score > 0)
-    .sort((a, b) => b.score - a.score);
+    .map((event) => ({ event, ...scoreEvent(event, words, categories) }))
+    // With real keywords in the query, only keyword hits count — a category
+    // hint alone must not drag in every event of that category.
+    .filter((entry) => (words.length > 0 ? entry.keyword > 0 : entry.total > 0))
+    .sort((a, b) => b.total - a.total);
 
   let matches = scored.slice(0, MAX_RESULTS).map((entry) => entry.event);
 
