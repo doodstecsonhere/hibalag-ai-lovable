@@ -133,6 +133,20 @@ function HibalagShell({ threadId }: { threadId: string }) {
 
   useEffect(refresh, [refresh]);
 
+  // Reconnection: announce the live gateway coming back without a reload.
+  const wasOffline = useRef(false);
+  useEffect(() => {
+    if (!online) {
+      wasOffline.current = true;
+      return;
+    }
+    if (wasOffline.current) {
+      wasOffline.current = false;
+      toast.success(t("offline.reconnected"));
+      refresh();
+    }
+  }, [online, t, refresh]);
+
   const liveCount = useMemo(() => {
     const iso = todayIso();
     return events.filter((event) => event.date === iso).length;
@@ -270,6 +284,13 @@ function HibalagShell({ threadId }: { threadId: string }) {
               online={online}
               userId={user?.id ?? null}
               onThreadSaved={refreshThreads}
+              onOfflineMatch={(next) =>
+                setFilters({
+                  date: next.date,
+                  categories: next.categories,
+                  query: next.query,
+                })
+              }
             />
           ) : null}
         </div>
