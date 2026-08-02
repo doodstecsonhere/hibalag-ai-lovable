@@ -92,6 +92,17 @@ const bisaya = {
   "install.action": "Install",
   "install.later": "Sa lain na lang",
   "install.dismiss": "Isalikway ang install prompt",
+
+  // Offline mode
+  "offline.banner": "⚡ Offline Mode — Mga tubag gikan sa cached nga schedule.",
+  "offline.intro":
+    "Offline ka karon bay, apan gipangita nako sa imong cached schedule! Mao kini ang {count} nga akong nakit-an:",
+  "offline.outro": "Tan-awa usab ang Schedule Canvas alang sa kumpletong listahan!",
+  "offline.noMatch":
+    "Offline ka karon bay, ug wala ko'y nakit-an nga mo-match ana sa cached nga schedule. Ablihi ang Schedule Canvas para makita ang tanan, o pangutan-a ko pag-usab inig signal.",
+  "offline.noCache":
+    "Offline ka karon ug wala pa'y na-save nga schedule ani nga device. Ablihi ang app kausa nga naa'y signal para ma-download ni.",
+  "offline.reconnected": "Back online! Live AI reconnected.",
 } as const;
 
 export type TranslationKey = keyof typeof bisaya;
@@ -174,6 +185,16 @@ const english: Record<TranslationKey, string> = {
   "install.action": "Install",
   "install.later": "Not now",
   "install.dismiss": "Dismiss install prompt",
+
+  "offline.banner": "⚡ Offline Mode — Answers generated from cached schedule data.",
+  "offline.intro":
+    "You're offline right now, but I searched your cached schedule! Here's what I found ({count}):",
+  "offline.outro": "Check the Schedule Canvas too for the complete list!",
+  "offline.noMatch":
+    "You're offline, and I couldn't find that in the cached schedule. Open the Schedule Canvas to browse everything, or ask again once you're back online.",
+  "offline.noCache":
+    "You're offline and there's no saved schedule on this device yet. Open the app once with signal so it can download.",
+  "offline.reconnected": "Back online! Live AI reconnected.",
 };
 
 const tagalog: Record<TranslationKey, string> = {
@@ -255,6 +276,16 @@ const tagalog: Record<TranslationKey, string> = {
   "install.action": "I-install",
   "install.later": "Sa susunod na lang",
   "install.dismiss": "Isara ang install prompt",
+
+  "offline.banner": "⚡ Offline Mode — Mga sagot mula sa naka-cache na schedule.",
+  "offline.intro":
+    "Offline ka ngayon, pero hinanap ko sa naka-cache mong schedule! Ito ang {count} na nakita ko:",
+  "offline.outro": "Tingnan din ang Schedule Canvas para sa kumpletong listahan!",
+  "offline.noMatch":
+    "Offline ka ngayon, at wala akong nakitang tugma sa naka-cache na schedule. Buksan ang Schedule Canvas para i-browse lahat ng event, o subukan ulit kapag may signal.",
+  "offline.noCache":
+    "Offline ka ngayon at wala pang naka-save na schedule sa device na ito. Buksan ulit ang app kapag may signal para ma-download ito.",
+  "offline.reconnected": "Back online! Live AI reconnected.",
 };
 
 export const translations: Record<Language, Record<TranslationKey, string>> = {
