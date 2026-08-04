@@ -71,8 +71,23 @@ function HibalagIndex() {
   }, [navigate]);
 
   return (
-    <div className="flex h-dvh items-center justify-center bg-background">
-      <p className="text-sm text-muted-foreground">Gi-andam ang Hibalag AI…</p>
+    <div className="flex h-dvh items-center justify-center bg-background px-6">
+      <main className="max-w-xl space-y-4 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          Hibalag AI: Silliman University Founders Week Guide
+        </h1>
+        <p className="text-base text-muted-foreground">
+          Hibalag AI is your witty Bisaya-speaking guide to Silliman University&apos;s Founders Week
+          and Hibalag Festival in Dumaguete City this August 2026 — ask about the parade, Miss
+          Silliman, worship services, alumni homecoming, cultural shows, and the party grounds.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Browse the full schedule canvas by date and category, plan a day-by-day itinerary, and
+          chat in Bisaya, Tagalog, or English — even offline.
+        </p>
+        <p className="text-sm text-muted-foreground">Gi-andam ang Hibalag AI…</p>
+      </main>
     </div>
   );
 }
+
