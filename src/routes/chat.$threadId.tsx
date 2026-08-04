@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HibalagApp } from "@/components/hibalag-app";
 
 export const Route = createFileRoute("/chat/$threadId")({
-  head: () => ({
+  head: ({ params }) => ({
     meta: [
       { title: "Chat · Hibalag AI Founders Week Guide" },
       {
@@ -19,6 +19,11 @@ export const Route = createFileRoute("/chat/$threadId")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: `https://hibalag-ai.lovable.app/chat/${params.threadId}` },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [
+      { rel: "canonical", href: `https://hibalag-ai.lovable.app/chat/${params.threadId}` },
     ],
   }),
   component: ChatThreadPage,

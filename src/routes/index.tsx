@@ -1,5 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { newId } from "@/lib/threads";
 
@@ -60,18 +59,10 @@ export const Route = createFileRoute("/")({
 });
 
 function HibalagIndex() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    void navigate({
-      to: "/chat/$threadId",
-      params: { threadId: newId() },
-      replace: true,
-    });
-  }, [navigate]);
+  const threadId = newId();
 
   return (
-    <div className="flex h-dvh items-center justify-center bg-background px-6">
+    <div className="flex min-h-dvh items-center justify-center bg-background px-6 py-12">
       <main className="max-w-xl space-y-4 text-center">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           Hibalag AI: Silliman University Founders Week Guide
@@ -85,9 +76,22 @@ function HibalagIndex() {
           Browse the full schedule canvas by date and category, plan a day-by-day itinerary, and
           chat in Bisaya, Tagalog, or English — even offline.
         </p>
-        <p className="text-sm text-muted-foreground">Gi-andam ang Hibalag AI…</p>
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <Link
+            to="/chat/$threadId"
+            params={{ threadId }}
+            className="inline-flex min-h-11 items-center rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground"
+          >
+            Start chatting with Hibalag AI
+          </Link>
+          <Link
+            to="/schedule"
+            className="inline-flex min-h-11 items-center rounded-full border border-border px-6 text-sm font-medium text-foreground"
+          >
+            View the full 2026 schedule
+          </Link>
+        </div>
       </main>
     </div>
   );
 }
-
