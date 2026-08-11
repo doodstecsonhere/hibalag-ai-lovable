@@ -5,8 +5,9 @@ import { supabase } from "@/lib/supabase";
 
 const CANONICAL = "https://hibalag-ai.lovable.app/schedule";
 const TITLE = "Silliman Founders Day & Hibalag Festival 2026 Schedule";
+const META_TITLE = "Hibalag Festival 2026 Schedule · Hibalag AI";
 const DESCRIPTION =
-  "Full August 2026 schedule for Silliman University's Founders Day and Hibalag Festival in Dumaguete — parade, Miss Silliman, worship services, alumni homecoming, cultural shows, and party nights.";
+  "August 2026 Silliman Founders Day and Hibalag Festival schedule in Dumaguete: parade, Miss Silliman, worship, alumni homecoming, and cultural shows.";
 
 export const Route = createFileRoute("/schedule")({
   loader: async () => {
@@ -20,9 +21,9 @@ export const Route = createFileRoute("/schedule")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${TITLE} · Hibalag AI` },
+      { title: META_TITLE },
       { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
+      { property: "og:title", content: META_TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
       { property: "og:url", content: CANONICAL },
