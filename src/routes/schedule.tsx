@@ -21,9 +21,9 @@ export const Route = createFileRoute("/schedule")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${TITLE} · Hibalag AI` },
+      { title: META_TITLE },
       { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
+      { property: "og:title", content: META_TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
       { property: "og:url", content: CANONICAL },
