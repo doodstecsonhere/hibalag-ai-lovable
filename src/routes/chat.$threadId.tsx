@@ -19,6 +19,12 @@ export const Route = createFileRoute("/chat/$threadId")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Chat · Hibalag AI Founders Week Guide" },
+      {
+        name: "twitter:description",
+        content:
+          "Your Hibalag AI conversation about Silliman University's 125th Founders Day and Hibalag Festival schedule, venues, and itineraries.",
+      },
       { property: "og:url", content: `https://hibalag-ai.lovable.app/chat/${params.threadId}` },
       { name: "robots", content: "noindex" },
     ],
