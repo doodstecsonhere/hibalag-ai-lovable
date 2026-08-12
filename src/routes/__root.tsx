@@ -79,8 +79,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Hibalag AI: Silliman Founders Week Guide" },
-      { name: "description", content: "Ask Hibalag AI about Silliman University's Founders Week and Hibalag Festival schedule on August — in Bisaya, Tagalog, English, etc." },
       { name: "author", content: "Hibalag AI" },
       { name: "theme-color", content: "#990000" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
@@ -89,13 +87,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-title", content: "Hibalag AI" },
       { name: "google-site-verification", content: "X7U5pavSwPOvLL3555Xmc02RC_m-BiKSM_rvxureRzw" },
 
-      { property: "og:title", content: "Hibalag AI: Silliman Founders Week Guide" },
-      { property: "og:description", content: "Ask Hibalag AI about Silliman University's Founders Week and Hibalag Festival schedule on August — in Bisaya, Tagalog, English, etc." },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Hibalag AI" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Hibalag AI: Silliman Founders Week Guide" },
-      { name: "twitter:description", content: "Ask Hibalag AI about Silliman University's Founders Week and Hibalag Festival schedule on August — in Bisaya, Tagalog, English, etc." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/f789edf4-23a7-483e-a1d5-0cde2bd47635" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/f789edf4-23a7-483e-a1d5-0cde2bd47635" },
     ],
