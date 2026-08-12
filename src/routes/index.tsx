@@ -20,6 +20,12 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hibalag-ai.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Hibalag AI: Silliman Founders Week Guide" },
+      {
+        name: "twitter:description",
+        content:
+          "Ask Hibalag AI about Silliman University's Founders Week and Hibalag Festival schedule on August — in Bisaya, Tagalog, English, etc.",
+      },
     ],
     links: [{ rel: "canonical", href: "https://hibalag-ai.lovable.app/" }],
     scripts: [
