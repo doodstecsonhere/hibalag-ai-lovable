@@ -28,6 +28,8 @@ export const Route = createFileRoute("/schedule")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: CANONICAL },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: META_TITLE },
+      { name: "twitter:description", content: DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
     scripts: [
