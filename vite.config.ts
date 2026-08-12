@@ -29,7 +29,7 @@ export default defineConfig({
         outDir: "dist/client",
         manifest: {
           id: "/",
-          name: "Hibalag AI — Silliman Founders Day 2026",
+          name: "Hibalag AI",
           short_name: "Hibalag AI",
           description:
             "Your Bisaya-speaking guide to Silliman University's 125th Founders Day and the Hibalag Festival, August 2026.",

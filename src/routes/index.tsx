@@ -5,13 +5,13 @@ import { newId } from "@/lib/threads";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Hibalag AI: Silliman Founders Week Guide" },
+      { title: "Hibalag AI" },
       {
         name: "description",
         content:
           "Ask Hibalag AI about Silliman University's Founders Week and Hibalag Festival schedule on August — in Bisaya, Tagalog, English, etc.",
       },
-      { property: "og:title", content: "Hibalag AI: Silliman Founders Week Guide" },
+      { property: "og:title", content: "Hibalag AI" },
       {
         property: "og:description",
         content:
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hibalag-ai.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Hibalag AI: Silliman Founders Week Guide" },
+      { name: "twitter:title", content: "Hibalag AI" },
       {
         name: "twitter:description",
         content:
