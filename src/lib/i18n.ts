@@ -7,6 +7,41 @@ export const LANGUAGE_LABELS: Record<Language, { short: string; full: string }> 
   tagalog: { short: "Tag", full: "Tagalog" },
 };
 
+/** Short localized month names (index 0 = January) used for date-range labels. */
+export const SHORT_MONTHS: Record<Language, string[]> = {
+  bisaya: ["Ene", "Peb", "Mar", "Abr", "May", "Hun", "Hul", "Ago", "Sep", "Okt", "Nob", "Dis"],
+  english: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  tagalog: ["Ene", "Peb", "Mar", "Abr", "May", "Hun", "Hul", "Ago", "Sep", "Okt", "Nob", "Dis"],
+};
+
+/**
+ * Formats a date range like "Aug 1–29, 2026" (same month) or
+ * "Aug 1 – Sep 5, 2026" (across months) in the given language.
+ * Returns "Dates TBA" when there is nothing to show.
+ */
+export function formatEventRange(
+  language: Language,
+  min: string | null,
+  max: string | null,
+): string {
+  if (!min || !max) return language === "english" ? "Dates TBA" : "Petsa TBA";
+  const [minY, minM, minD] = min.split("-").map(Number);
+  const [maxY, maxM, maxD] = max.split("-").map(Number);
+  if ([minY, minM, minD, maxY, maxM, maxD].some(Number.isNaN)) {
+    return language === "english" ? "Dates TBA" : "Petsa TBA";
+  }
+  const months = SHORT_MONTHS[language];
+  const sameYear = minY === maxY;
+  const sameMonth = sameYear && minM === maxM;
+  if (sameMonth) {
+    return `${months[minM - 1]} ${minD}–${maxD}, ${maxY}`;
+  }
+  if (sameYear) {
+    return `${months[minM - 1]} ${minD} – ${months[maxM - 1]} ${maxD}, ${maxY}`;
+  }
+  return `${months[minM - 1]} ${minD}, ${minY} – ${months[maxM - 1]} ${maxD}, ${maxY}`;
+}
+
 const bisaya = {
   // Header
   "header.menu": "Ablihi ang menu ug chat history",
