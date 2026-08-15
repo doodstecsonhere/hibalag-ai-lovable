@@ -41,7 +41,7 @@ const bisaya = {
   // Canvas panel
   "canvas.aria": "Canvas sa schedule sa festival",
   "canvas.title": "Schedule Canvas",
-  "canvas.count": "{count} events · Ago 1–29, 2026",
+  "canvas.count": "{count} events · {range}",
   "canvas.offlineCopy": "Offline copy",
   "canvas.close": "Isira ang canvas",
   "canvas.search": "Pangitaa ang event, venue, o org…",
@@ -137,7 +137,7 @@ const english: Record<TranslationKey, string> = {
 
   "canvas.aria": "Festival schedule canvas",
   "canvas.title": "Schedule Canvas",
-  "canvas.count": "{count} events · Aug 1–29, 2026",
+  "canvas.count": "{count} events · {range}",
   "canvas.offlineCopy": "Offline copy",
   "canvas.close": "Close canvas",
   "canvas.search": "Search event, venue, or org…",
@@ -227,7 +227,7 @@ const tagalog: Record<TranslationKey, string> = {
 
   "canvas.aria": "Canvas ng schedule ng festival",
   "canvas.title": "Schedule Canvas",
-  "canvas.count": "{count} events · Ago 1–29, 2026",
+  "canvas.count": "{count} events · {range}",
   "canvas.offlineCopy": "Offline na kopya",
   "canvas.close": "Isara ang canvas",
   "canvas.search": "Maghanap ng event, venue, o org…",
