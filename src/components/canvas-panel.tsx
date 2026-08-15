@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n-context";
+import { formatEventRange, type Language } from "@/lib/i18n";
 import type { TranslationKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import {
@@ -136,8 +137,18 @@ export function CanvasPanel({
   onRetry,
   onClose,
 }: CanvasPanelProps) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const visible = useMemo(() => filterEvents(events, filters), [events, filters]);
+
+  const range = useMemo(() => {
+    const dates = events
+      .map((event) => event.date)
+      .filter((value): value is string => Boolean(value))
+      .sort();
+    const min = dates[0] ?? null;
+    const max = dates[dates.length - 1] ?? null;
+    return formatEventRange(language as Language, min, max);
+  }, [events, language]);
 
 
   const grouped = useMemo(() => {
@@ -169,7 +180,7 @@ export function CanvasPanel({
           <div>
             <h2 className="font-display text-lg font-semibold">{t("canvas.title")}</h2>
             <p className="text-xs text-muted-foreground">
-              {t("canvas.count", { count: visible.length })}
+              {t("canvas.count", { count: visible.length, range })}
             </p>
 
           </div>
