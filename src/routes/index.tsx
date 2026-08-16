@@ -71,4 +71,3 @@ function HibalagIndex() {
   const [threadId] = useState(() => newId());
   return <HibalagApp threadId={threadId} />;
 }
-}
