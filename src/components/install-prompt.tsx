@@ -1,31 +1,47 @@
-import { Download, Smartphone, X } from "lucide-react";
+import { Download, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n-context";
 
 type InstallPromptProps = {
   open: boolean;
+  platform: "native" | "ios" | null;
   onInstall: () => void;
   onDismiss: () => void;
 };
 
-export function InstallPrompt({ open, onInstall, onDismiss }: InstallPromptProps) {
+export function InstallPrompt({ open, platform, onInstall, onDismiss }: InstallPromptProps) {
   const { t } = useI18n();
-  if (!open) return null;
+  if (!open || !platform) return null;
+
+  const isIos = platform === "ios";
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 flex justify-center p-3 sm:p-6">
       <div className="animate-rise w-full max-w-md rounded-3xl border border-border bg-card p-4 shadow-[var(--shadow-glow)]">
         <div className="flex items-start gap-3">
-          <div className="crimson-gradient flex size-11 shrink-0 items-center justify-center rounded-2xl text-primary-foreground">
-            <Smartphone className="size-5" aria-hidden />
-          </div>
+          <img
+            src="/icon-192.png"
+            alt=""
+            decoding="async"
+            width={44}
+            height={44}
+            className="size-11 shrink-0 rounded-2xl"
+          />
           <div className="min-w-0 flex-1">
             <h2 className="font-display text-base font-semibold">{t("install.title")}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">{t("install.body")}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {isIos ? t("install.iosBody") : t("install.body")}
+            </p>
             <div className="mt-3 flex gap-2">
               <Button size="sm" onClick={onInstall}>
-                <Download className="mr-1.5 size-4" /> {t("install.action")}
+                {isIos ? (
+                  t("install.gotIt")
+                ) : (
+                  <>
+                    <Download className="mr-1.5 size-4" /> {t("install.action")}
+                  </>
+                )}
               </Button>
               <Button size="sm" variant="ghost" onClick={onDismiss}>
                 {t("install.later")}

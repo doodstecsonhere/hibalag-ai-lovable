@@ -372,7 +372,10 @@ function HibalagShell({ threadId }: { threadId: string }) {
 
       <InstallPrompt
         open={install.shouldPrompt}
-        onInstall={() => void install.install()}
+        platform={install.platform}
+        onInstall={() =>
+          install.platform === "native" ? void install.install() : install.dismiss()
+        }
         onDismiss={install.dismiss}
       />
     </div>
