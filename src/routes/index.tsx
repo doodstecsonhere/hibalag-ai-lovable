@@ -1,6 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
+import { HibalagApp } from "@/components/hibalag-app";
 import { newId } from "@/lib/threads";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
