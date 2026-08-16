@@ -46,6 +46,7 @@ const bisaya = {
   // Header
   "header.menu": "Ablihi ang menu ug chat history",
   "header.schedule": "Ablihi ang schedule canvas",
+  "header.scheduleToday": "{count} ka event karong adlawa",
   "header.status.active": "Active",
   "header.status.offline": "Offline mode",
   "header.status.synced": "Synced",
@@ -145,6 +146,7 @@ export type TranslationKey = keyof typeof bisaya;
 const english: Record<TranslationKey, string> = {
   "header.menu": "Open menu and chat history",
   "header.schedule": "Open schedule canvas",
+  "header.scheduleToday": "{count} events today",
   "header.status.active": "Active",
   "header.status.offline": "Offline mode",
   "header.status.synced": "Synced",
@@ -235,6 +237,7 @@ const english: Record<TranslationKey, string> = {
 const tagalog: Record<TranslationKey, string> = {
   "header.menu": "Buksan ang menu at chat history",
   "header.schedule": "Buksan ang schedule canvas",
+  "header.scheduleToday": "{count} event ngayong araw",
   "header.status.active": "Aktibo",
   "header.status.offline": "Offline mode",
   "header.status.synced": "Naka-sync",

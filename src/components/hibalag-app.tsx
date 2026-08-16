@@ -153,6 +153,11 @@ function HibalagShell({ threadId }: { threadId: string }) {
     return events.filter((event) => event.date === iso).length;
   }, [events]);
 
+  const scheduleLabel =
+    liveCount > 0
+      ? `${t("header.schedule")} — ${t("header.scheduleToday", { count: liveCount })}`
+      : t("header.schedule");
+
   const goToThread = useCallback(
     (id: string) => {
       setDrawerOpen(false);
@@ -260,12 +265,16 @@ function HibalagShell({ threadId }: { threadId: string }) {
           <Button
             variant="secondary"
             onClick={() => setCanvasOpen(true)}
-            aria-label={t("header.schedule")}
+            aria-label={scheduleLabel}
+            title={scheduleLabel}
             className="relative size-11 shrink-0 rounded-full p-0 lg:hidden"
           >
             <CalendarRange className="size-5" />
             {liveCount > 0 ? (
-              <span className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+              <span
+                aria-hidden
+                className="absolute -top-0.5 -right-0.5 grid min-w-5 place-items-center rounded-full border border-primary/40 bg-primary/10 px-1 text-[10px] font-bold text-primary"
+              >
                 {liveCount}
               </span>
             ) : null}
