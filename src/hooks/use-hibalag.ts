@@ -56,24 +56,61 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 };
 
+/** "native" = beforeinstallprompt fired (Android Chrome, Edge desktop).
+ *  "ios" = iOS/iPadOS Safari — supports Add to Home Screen but never fires the event.
+ *  null = not installable or already installed. */
+export type InstallPlatform = "native" | "ios" | null;
+
 const INSTALL_DISMISSED_KEY = "hibalag:install-dismissed";
+const SNOOZE_DAYS = 14;
+
+function detectIos(): boolean {
+  if (typeof navigator === "undefined") return false;
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  const ua = navigator.userAgent || "";
+  const isIosDevice = /iPhone|iPad|iPod/i.test(ua);
+  const isNotEdgeLegacy = !(window as unknown as { MSStream?: unknown }).MSStream;
+  return isIosDevice && isNotEdgeLegacy;
+}
+
+function isDismissedRecently(): boolean {
+  try {
+    const stored = localStorage.getItem(INSTALL_DISMISSED_KEY);
+    if (!stored) return false;
+    const dismissedAt = Number(stored);
+    if (!Number.isFinite(dismissedAt)) return false;
+    const ageDays = (Date.now() - dismissedAt) / (1000 * 60 * 60 * 24);
+    return ageDays < SNOOZE_DAYS;
+  } catch {
+    return false;
+  }
+}
 
 export function useInstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
+  const [platform, setPlatform] = useState<InstallPlatform>(null);
   const [dismissed, setDismissed] = useState(true);
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {
-    setDismissed(localStorage.getItem(INSTALL_DISMISSED_KEY) === "1");
-    setInstalled(window.matchMedia("(display-mode: standalone)").matches);
+    const standalone = window.matchMedia("(display-mode: standalone)").matches;
+    setInstalled(standalone);
+    setDismissed(isDismissedRecently());
+
+    if (!standalone) {
+      // iOS Safari supports Add to Home Screen but never fires beforeinstallprompt.
+      if (detectIos()) setPlatform("ios");
+    }
 
     const onPrompt = (event: Event) => {
       event.preventDefault();
       setDeferred(event as BeforeInstallPromptEvent);
+      setPlatform("native");
     };
     const onInstalled = () => {
       setInstalled(true);
       setDeferred(null);
+      setPlatform(null);
     };
 
     window.addEventListener("beforeinstallprompt", onPrompt);
@@ -95,15 +132,16 @@ export function useInstallPrompt() {
   const dismiss = useCallback(() => {
     setDismissed(true);
     try {
-      localStorage.setItem(INSTALL_DISMISSED_KEY, "1");
+      localStorage.setItem(INSTALL_DISMISSED_KEY, String(Date.now()));
     } catch {
       /* ignore */
     }
   }, []);
 
   return {
-    canInstall: Boolean(deferred) && !installed,
-    shouldPrompt: Boolean(deferred) && !installed && !dismissed,
+    platform,
+    canInstall: platform !== null && !installed,
+    shouldPrompt: platform !== null && !installed && !dismissed,
     installed,
     install,
     dismiss,
