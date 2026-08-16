@@ -153,6 +153,11 @@ function HibalagShell({ threadId }: { threadId: string }) {
     return events.filter((event) => event.date === iso).length;
   }, [events]);
 
+  const scheduleLabel =
+    liveCount > 0
+      ? `${t("header.schedule")} — ${t("header.scheduleToday", { count: liveCount })}`
+      : t("header.schedule");
+
   const goToThread = useCallback(
     (id: string) => {
       setDrawerOpen(false);
