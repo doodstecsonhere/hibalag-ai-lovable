@@ -125,8 +125,11 @@ const bisaya = {
   // Install prompt
   "install.title": "I-install ang Hibalag AI",
   "install.body": "I-add sa imong home screen para paspas ug ma-browse ang schedule bisan walay signal.",
+  "install.iosBody":
+    "Sa Safari, i-tap ang Share icon (↑), unya pilia ang 'Add to Home Screen' para ma-install ang Hibalag AI.",
   "install.action": "Install",
   "install.later": "Sa lain na lang",
+  "install.gotIt": "Sige",
   "install.dismiss": "Isalikway ang install prompt",
 
   // Offline mode
@@ -219,8 +222,11 @@ const english: Record<TranslationKey, string> = {
 
   "install.title": "Install Hibalag AI",
   "install.body": "Add it to your home screen for faster access and offline schedule browsing.",
+  "install.iosBody":
+    "In Safari, tap the Share icon (↑), then choose 'Add to Home Screen' to install Hibalag AI.",
   "install.action": "Install",
   "install.later": "Not now",
+  "install.gotIt": "Got it",
   "install.dismiss": "Dismiss install prompt",
 
   "offline.banner": "⚡ Offline Mode — Answers generated from cached schedule data.",
@@ -311,8 +317,11 @@ const tagalog: Record<TranslationKey, string> = {
   "install.title": "I-install ang Hibalag AI",
   "install.body":
     "Idagdag sa home screen mo para mas mabilis at mabasa ang schedule kahit walang signal.",
+  "install.iosBody":
+    "Sa Safari, i-tap ang Share icon (↑), tapos piliin ang 'Add to Home Screen' para ma-install ang Hibalag AI.",
   "install.action": "I-install",
   "install.later": "Sa susunod na lang",
+  "install.gotIt": "Sige",
   "install.dismiss": "Isara ang install prompt",
 
   "offline.banner": "⚡ Offline Mode — Mga sagot mula sa naka-cache na schedule.",
