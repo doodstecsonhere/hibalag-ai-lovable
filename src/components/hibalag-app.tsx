@@ -68,7 +68,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
   const { language, setLanguage, t } = useI18n();
 
   const online = useOnlineStatus();
-  const { user, ready } = useOptionalAuth();
+  const { user } = useOptionalAuth();
   const install = useInstallPrompt();
   const store = useMemo(() => createThreadStore(user?.id ?? null), [user?.id]);
 
