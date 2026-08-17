@@ -191,11 +191,15 @@ export async function loadSchedule(options?: {
   };
 
   if (cached) {
-    void revalidate()
-      .then((fresh) => {
-        if (fresh && fresh.markdown !== cached.markdown) options?.onRevalidated?.(fresh);
-      })
-      .catch(() => undefined);
+    // Offline: skip the background refresh entirely — a hanging request would
+    // keep the app's network queue busy for 20–30s for no benefit.
+    if (!offline) {
+      void revalidate()
+        .then((fresh) => {
+          if (fresh && fresh.markdown !== cached.markdown) options?.onRevalidated?.(fresh);
+        })
+        .catch(() => undefined);
+    }
 
     return {
       markdown: cached.markdown,
