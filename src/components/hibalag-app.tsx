@@ -83,7 +83,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
   const [fromCache, setFromCache] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [canvasOpen, setCanvasOpen] = useState(false);
-  const [filters, setFilters] = useState<CanvasFilters>({ date: null, categories: [], query: "" });
+  const [filters, setFilters] = useState<CanvasFilters>({ date: todayIso(), categories: [], query: "" });
 
   const refreshThreads = useCallback(() => {
     store
