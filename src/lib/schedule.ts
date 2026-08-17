@@ -175,6 +175,7 @@ export async function loadSchedule(options?: {
   onRevalidated?: (payload: SchedulePayload) => void;
 }): Promise<SchedulePayload> {
   const cached = await readCachedSchedule();
+  const offline = typeof navigator !== "undefined" && navigator.onLine === false;
 
   const revalidate = async () => {
     const markdown = await fetchRemoteSchedule();
