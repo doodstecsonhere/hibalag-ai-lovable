@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { AuthDialog } from "@/components/auth-dialog";
-import { CanvasPanel, todayIso, type CanvasFilters } from "@/components/canvas-panel";
+import { CanvasPanel, type CanvasFilters } from "@/components/canvas-panel";
 import { ChatPanel } from "@/components/chat-panel";
 import { InstallPrompt } from "@/components/install-prompt";
 import { ThreadDrawer } from "@/components/thread-drawer";
