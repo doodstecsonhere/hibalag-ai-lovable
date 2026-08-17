@@ -68,7 +68,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
   const { language, setLanguage, t } = useI18n();
 
   const online = useOnlineStatus();
-  const { user, ready } = useOptionalAuth();
+  const { user } = useOptionalAuth();
   const install = useInstallPrompt();
   const store = useMemo(() => createThreadStore(user?.id ?? null), [user?.id]);
 
@@ -92,14 +92,14 @@ function HibalagShell({ threadId }: { threadId: string }) {
       .catch(() => setThreads([]));
   }, [store]);
 
+  // Hydrate from local storage immediately; re-runs once auth resolves (store
+  // identity changes), so nothing waits on a network round-trip.
   useEffect(() => {
-    if (!ready) return;
     refreshThreads();
     setLocalCount(user ? localThreadCount() : 0);
-  }, [ready, refreshThreads, user]);
+  }, [refreshThreads, user]);
 
   useEffect(() => {
-    if (!ready) return;
     let cancelled = false;
     setInitialMessages(null);
     store
@@ -113,7 +113,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [store, threadId, ready]);
+  }, [store, threadId]);
 
   const refresh = useCallback(() => {
     setLoading(true);

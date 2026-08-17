@@ -52,7 +52,10 @@ export default defineConfig({
           ],
         },
         workbox: {
-          globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
+          globPatterns: [
+            "**/*.{js,css,html,svg,png,ico,jpg,jpeg,webp,woff,woff2,json,webmanifest,txt}",
+          ],
+          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
           // No prerendered HTML exists to precache (SSR), so navigations are
           // handled by the NetworkFirst route below with an app-shell fallback.
           navigateFallback: undefined,

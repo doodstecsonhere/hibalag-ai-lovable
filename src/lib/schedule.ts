@@ -175,6 +175,7 @@ export async function loadSchedule(options?: {
   onRevalidated?: (payload: SchedulePayload) => void;
 }): Promise<SchedulePayload> {
   const cached = await readCachedSchedule();
+  const offline = typeof navigator !== "undefined" && navigator.onLine === false;
 
   const revalidate = async () => {
     const markdown = await fetchRemoteSchedule();
@@ -190,11 +191,15 @@ export async function loadSchedule(options?: {
   };
 
   if (cached) {
-    void revalidate()
-      .then((fresh) => {
-        if (fresh && fresh.markdown !== cached.markdown) options?.onRevalidated?.(fresh);
-      })
-      .catch(() => undefined);
+    // Offline: skip the background refresh entirely — a hanging request would
+    // keep the app's network queue busy for 20–30s for no benefit.
+    if (!offline) {
+      void revalidate()
+        .then((fresh) => {
+          if (fresh && fresh.markdown !== cached.markdown) options?.onRevalidated?.(fresh);
+        })
+        .catch(() => undefined);
+    }
 
     return {
       markdown: cached.markdown,
@@ -204,7 +209,7 @@ export async function loadSchedule(options?: {
     };
   }
 
-  const fresh = await revalidate();
+  const fresh = offline ? null : await revalidate();
   if (fresh) return fresh;
   throw new Error("Wala pa'y schedule nga na-load. Sulayi pag-usab kung naa na'y signal.");
 }
