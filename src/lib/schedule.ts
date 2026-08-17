@@ -209,7 +209,7 @@ export async function loadSchedule(options?: {
     };
   }
 
-  const fresh = await revalidate();
+  const fresh = offline ? null : await revalidate();
   if (fresh) return fresh;
   throw new Error("Wala pa'y schedule nga na-load. Sulayi pag-usab kung naa na'y signal.");
 }
