@@ -113,7 +113,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [store, threadId, ready]);
+  }, [store, threadId]);
 
   const refresh = useCallback(() => {
     setLoading(true);
