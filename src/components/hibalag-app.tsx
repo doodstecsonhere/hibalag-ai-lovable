@@ -92,14 +92,14 @@ function HibalagShell({ threadId }: { threadId: string }) {
       .catch(() => setThreads([]));
   }, [store]);
 
+  // Hydrate from local storage immediately; re-runs once auth resolves (store
+  // identity changes), so nothing waits on a network round-trip.
   useEffect(() => {
-    if (!ready) return;
     refreshThreads();
     setLocalCount(user ? localThreadCount() : 0);
-  }, [ready, refreshThreads, user]);
+  }, [refreshThreads, user]);
 
   useEffect(() => {
-    if (!ready) return;
     let cancelled = false;
     setInitialMessages(null);
     store
