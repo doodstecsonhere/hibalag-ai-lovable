@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { AuthDialog } from "@/components/auth-dialog";
-import { CanvasPanel, type CanvasFilters } from "@/components/canvas-panel";
+import { CanvasPanel, todayIso, type CanvasFilters } from "@/components/canvas-panel";
 import { ChatPanel } from "@/components/chat-panel";
 import { InstallPrompt } from "@/components/install-prompt";
 import { ThreadDrawer } from "@/components/thread-drawer";
@@ -83,7 +83,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
   const [fromCache, setFromCache] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [canvasOpen, setCanvasOpen] = useState(false);
-  const [filters, setFilters] = useState<CanvasFilters>({ date: null, categories: [], query: "" });
+  const [filters, setFilters] = useState<CanvasFilters>({ date: todayIso(), categories: [], query: "" });
 
   const refreshThreads = useCallback(() => {
     store

@@ -35,6 +35,11 @@ const CATEGORY_STYLES: Record<Category, string> = {
   Parties: "bg-primary/12 text-primary border-primary/25",
 };
 
+export function todayIso() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
 export function filterEvents(events: ScheduleEvent[], filters: CanvasFilters) {
   const query = filters.query.trim().toLowerCase();
   return events.filter((event) => {
@@ -138,6 +143,7 @@ export function CanvasPanel({
   onClose,
 }: CanvasPanelProps) {
   const { t, language } = useI18n();
+  const today = todayIso();
   const visible = useMemo(() => filterEvents(events, filters), [events, filters]);
 
   const range = useMemo(() => {
@@ -228,6 +234,18 @@ export function CanvasPanel({
           >
             <CalendarDays className="mr-1 inline size-3.5" aria-hidden /> {t("canvas.allDays")}
           </button>
+          <button
+            type="button"
+            onClick={() => onFiltersChange({ ...filters, date: today })}
+            className={cn(
+              "min-h-11 shrink-0 rounded-full border px-4 text-xs font-semibold transition-colors",
+              filters.date === today
+                ? "border-primary bg-primary text-primary-foreground"
+                : "border-border bg-background text-muted-foreground hover:bg-accent",
+            )}
+          >
+            {t("canvas.today")}
+          </button>
           {FESTIVAL_DAYS.map((day) => (
             <button
               key={day}
@@ -287,8 +305,19 @@ export function CanvasPanel({
           </div>
         ) : grouped.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-            <p className="text-sm text-muted-foreground">{t("canvas.empty")}</p>
-
+            <p className="text-sm text-muted-foreground">
+              {filters.date === today ? t("canvas.emptyToday") : t("canvas.empty")}
+            </p>
+            {filters.date !== null ? (
+              <Button
+                className="mt-3"
+                size="sm"
+                variant="outline"
+                onClick={() => onFiltersChange({ ...filters, date: null })}
+              >
+                <CalendarDays className="mr-1.5 size-3.5" /> {t("canvas.showAllDays")}
+              </Button>
+            ) : null}
           </div>
         ) : (
           grouped.map(([date, dayEvents]) => (
