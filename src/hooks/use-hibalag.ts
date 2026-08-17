@@ -35,17 +35,45 @@ export function useOptionalAuth() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      if (!cancelled) setUser(session?.user ?? null);
     });
+
+    // Offline: never start a session request — supabase-js may try to refresh
+    // the token, and the browser can hang on it for 20–30s before rejecting.
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      setReady(true);
+      return () => {
+        cancelled = true;
+        subscription.subscription.unsubscribe();
+      };
+    }
+
+    // Never block UI on the session lookup either: mark ready fast and let the
+    // resolved session (if any) arrive afterwards.
+    const readyTimer = setTimeout(() => {
+      if (!cancelled) setReady(true);
+    }, 1000);
 
     supabase.auth
       .getSession()
-      .then(({ data }) => setUser(data.session?.user ?? null))
-      .catch(() => setUser(null))
-      .finally(() => setReady(true));
+      .then(({ data }) => {
+        if (!cancelled) setUser(data.session?.user ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setUser(null);
+      })
+      .finally(() => {
+        if (!cancelled) setReady(true);
+      });
 
-    return () => subscription.subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      clearTimeout(readyTimer);
+      subscription.subscription.unsubscribe();
+    };
   }, []);
 
   return { user, ready };
