@@ -42,13 +42,8 @@ import { cn } from "@/lib/utils";
 const LANGUAGE_OPTIONS: Language[] = ["bisaya", "english", "tagalog"];
 
 
-function toUIMessages(stored: StoredMessage[]): UIMessage[] {
-  return stored.map((message) => ({
-    id: message.id,
-    role: message.role,
-    parts: [{ type: "text" as const, text: message.content }],
-  }));
-}
+type Hydrated = { id: string; messages: StoredMessage[] };
+
 
 function todayIso() {
   const now = new Date();
