@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import type { UIMessage } from "ai";
+
 import { CalendarRange, Menu } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
