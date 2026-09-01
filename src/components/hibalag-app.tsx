@@ -173,6 +173,9 @@ function HibalagShell({ threadId }: { threadId: string }) {
 
   const handleDelete = useCallback(
     (id: string) => {
+      // Drop the hydrated snapshot first so nothing can re-render (and thus
+      // re-persist) the deleted conversation while the removal settles.
+      if (id === threadId) setHydrated(null);
       void store.remove(id).finally(() => {
         refreshThreads();
         if (id === threadId) handleNew();
@@ -180,6 +183,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
     },
     [store, refreshThreads, threadId, handleNew],
   );
+
 
   const handleRename = useCallback(
     (thread: Thread, title: string) => {
