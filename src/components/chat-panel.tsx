@@ -147,6 +147,7 @@ export function ChatPanel({
     async (value: string, includeUser: boolean) => {
       const stamp = Date.now();
       const assistantId = `off-a-${stamp}`;
+      dirtyRef.current = true;
       setOfflineBusy(true);
       setOfflineMessages((prev) => [
         ...prev,
@@ -194,6 +195,7 @@ export function ChatPanel({
     if (!value || busy) return;
     setInput("");
     lastQueryRef.current = value;
+    dirtyRef.current = true;
 
     const isOffline = typeof navigator !== "undefined" && navigator.onLine === false;
     if (isOffline) {
