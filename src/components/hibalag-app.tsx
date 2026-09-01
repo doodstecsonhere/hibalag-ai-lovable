@@ -288,11 +288,13 @@ function HibalagShell({ threadId }: { threadId: string }) {
 
       <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
         <div className="min-h-0 min-w-0">
-          {initialMessages ? (
+          {ready ? (
             <ChatPanel
               key={threadId}
               threadId={threadId}
-              initialMessages={initialMessages}
+              initialStored={ready.messages}
+              existingTitle={activeTitle}
+
               language={language}
               online={online}
               userId={user?.id ?? null}
