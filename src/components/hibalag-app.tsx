@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import type { UIMessage } from "ai";
+
 import { CalendarRange, Menu } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -42,13 +42,8 @@ import { cn } from "@/lib/utils";
 const LANGUAGE_OPTIONS: Language[] = ["bisaya", "english", "tagalog"];
 
 
-function toUIMessages(stored: StoredMessage[]): UIMessage[] {
-  return stored.map((message) => ({
-    id: message.id,
-    role: message.role,
-    parts: [{ type: "text" as const, text: message.content }],
-  }));
-}
+type Hydrated = { id: string; messages: StoredMessage[] };
+
 
 function todayIso() {
   const now = new Date();
@@ -73,7 +68,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
   const store = useMemo(() => createThreadStore(user?.id ?? null), [user?.id]);
 
   const [threads, setThreads] = useState<Thread[]>([]);
-  const [initialMessages, setInitialMessages] = useState<UIMessage[] | null>(null);
+  const [hydrated, setHydrated] = useState<Hydrated | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [localCount, setLocalCount] = useState(0);
@@ -99,21 +94,29 @@ function HibalagShell({ threadId }: { threadId: string }) {
     setLocalCount(user ? localThreadCount() : 0);
   }, [refreshThreads, user]);
 
+  // Hydration is tagged with the thread it belongs to, so a late response for a
+  // previously selected thread can never be rendered against the current one.
   useEffect(() => {
     let cancelled = false;
-    setInitialMessages(null);
     store
       .read(threadId)
       .then((stored) => {
-        if (!cancelled) setInitialMessages(toUIMessages(stored));
+        if (!cancelled) setHydrated({ id: threadId, messages: stored });
       })
       .catch(() => {
-        if (!cancelled) setInitialMessages([]);
+        if (!cancelled) setHydrated({ id: threadId, messages: [] });
       });
     return () => {
       cancelled = true;
     };
   }, [store, threadId]);
+
+  const ready = hydrated && hydrated.id === threadId ? hydrated : null;
+  const activeTitle = useMemo(
+    () => threads.find((thread) => thread.id === threadId)?.title ?? null,
+    [threads, threadId],
+  );
+
 
   const refresh = useCallback(() => {
     setLoading(true);
@@ -170,6 +173,9 @@ function HibalagShell({ threadId }: { threadId: string }) {
 
   const handleDelete = useCallback(
     (id: string) => {
+      // Drop the hydrated snapshot first so nothing can re-render (and thus
+      // re-persist) the deleted conversation while the removal settles.
+      if (id === threadId) setHydrated(null);
       void store.remove(id).finally(() => {
         refreshThreads();
         if (id === threadId) handleNew();
@@ -177,6 +183,7 @@ function HibalagShell({ threadId }: { threadId: string }) {
     },
     [store, refreshThreads, threadId, handleNew],
   );
+
 
   const handleRename = useCallback(
     (thread: Thread, title: string) => {
@@ -285,11 +292,13 @@ function HibalagShell({ threadId }: { threadId: string }) {
 
       <main className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
         <div className="min-h-0 min-w-0">
-          {initialMessages ? (
+          {ready ? (
             <ChatPanel
               key={threadId}
               threadId={threadId}
-              initialMessages={initialMessages}
+              initialStored={ready.messages}
+              existingTitle={activeTitle}
+
               language={language}
               online={online}
               userId={user?.id ?? null}
