@@ -39,7 +39,8 @@ function textMessage(id: string, role: "user" | "assistant", text: string): UIMe
 
 type ChatPanelProps = {
   threadId: string;
-  initialMessages: UIMessage[];
+  initialStored: StoredMessage[];
+  existingTitle: string | null;
   language: Language;
   online: boolean;
   userId: string | null;
@@ -49,7 +50,8 @@ type ChatPanelProps = {
 
 export function ChatPanel({
   threadId,
-  initialMessages,
+  initialStored,
+  existingTitle,
   language,
   online,
   userId,
@@ -65,6 +67,27 @@ export function ChatPanel({
   const [offlineBusy, setOfflineBusy] = useState(false);
   const lastQueryRef = useRef("");
   const handledErrorRef = useRef<unknown>(null);
+
+  // Hydration must never write back to storage. Only a real user turn in this
+  // mounted thread flips this on.
+  const dirtyRef = useRef(false);
+  const titleRef = useRef(existingTitle);
+  titleRef.current = existingTitle ?? titleRef.current;
+
+  // Frozen at mount (the panel is keyed by threadId, so a new thread remounts).
+  const [initialMessages] = useState<UIMessage[]>(() =>
+    initialStored.map((message) => ({
+      id: message.id,
+      role: message.role,
+      parts: [{ type: "text" as const, text: message.content }],
+    })),
+  );
+  const [createdAtById] = useState(
+    () => new Map(initialStored.map((message) => [message.id, message.createdAt])),
+  );
+  const [threadCreatedAt] = useState(
+    () => initialStored[0]?.createdAt ?? new Date().toISOString(),
+  );
 
   const { messages, sendMessage, status, error } = useChat({
     id: threadId,
@@ -86,25 +109,38 @@ export function ChatPanel({
   }, [allMessages, busy]);
 
   useEffect(() => {
-    if (busy || allMessages.length === 0) return;
-    const stored: StoredMessage[] = allMessages.map((message, index) => ({
-      id: message.id ?? `${threadId}-${index}`,
-      role: message.role === "assistant" ? "assistant" : "user",
-      content: messageText(message),
-      createdAt: new Date(Date.now() + index).toISOString(),
-    }));
-    const now = new Date().toISOString();
+    if (busy || !dirtyRef.current || allMessages.length === 0) return;
+    const base = Date.now();
+    const stored: StoredMessage[] = allMessages.map((message, index) => {
+      const id = message.id ?? `${threadId}-${index}`;
+      return {
+        id,
+        role: message.role === "assistant" ? "assistant" : "user",
+        content: messageText(message),
+        // Preserve original timestamps so restored order never shifts.
+        createdAt: createdAtById.get(id) ?? new Date(base + index).toISOString(),
+      };
+    });
+    stored.forEach((message) => createdAtById.set(message.id, message.createdAt));
+
     const thread: Thread = {
       id: threadId,
-      title: titleFromMessage(stored.find((m) => m.role === "user")?.content ?? ""),
-      createdAt: stored[0]?.createdAt ?? now,
-      updatedAt: now,
+      // A persisted title is authoritative; we only generate one for a thread
+      // that has never had one.
+      title:
+        titleRef.current ??
+        titleFromMessage(stored.find((m) => m.role === "user")?.content ?? ""),
+      createdAt: threadCreatedAt,
+      updatedAt: new Date().toISOString(),
     };
+    titleRef.current = thread.title;
+
     void store
       .save(thread, stored)
       .then(onThreadSaved)
       .catch(() => undefined);
-  }, [allMessages, busy, store, threadId, onThreadSaved]);
+  }, [allMessages, busy, store, threadId, onThreadSaved, createdAtById, threadCreatedAt]);
+
 
   /** Generates and "streams" a grounded reply from the cached schedule, locally. */
   const runOffline = useCallback(
