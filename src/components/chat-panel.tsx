@@ -138,7 +138,10 @@ export function ChatPanel({
     void store
       .save(thread, stored)
       .then(onThreadSaved)
-      .catch(() => undefined);
+      .catch((cause: unknown) => {
+        console.error("[hibalag] failed to persist thread", cause);
+      });
+
   }, [allMessages, busy, store, threadId, onThreadSaved, createdAtById, threadCreatedAt]);
 
 
