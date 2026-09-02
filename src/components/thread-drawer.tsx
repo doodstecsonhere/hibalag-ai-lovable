@@ -137,28 +137,28 @@ export function ThreadDrawer({
                         <button
                           type="button"
                           onClick={() => onSelect(thread.id)}
-                          className="min-w-0 flex-1 truncate text-left text-xs font-medium"
+                          className="min-h-11 min-w-0 flex-1 truncate text-left text-xs font-medium"
                         >
                           {thread.title}
                         </button>
                         <button
                           type="button"
                           aria-label={t("threads.rename", { title: thread.title })}
-                          className="rounded-md p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-foreground focus-visible:opacity-100"
+                          className="grid size-11 shrink-0 place-items-center rounded-md text-muted-foreground opacity-100 hover:text-foreground focus-visible:opacity-100 sm:size-8 sm:opacity-0 sm:group-hover:opacity-100"
                           onClick={() => {
                             setEditingId(thread.id);
                             setDraft(thread.title);
                           }}
                         >
-                          <Pencil className="size-3.5" />
+                          <Pencil className="size-4" />
                         </button>
                         <button
                           type="button"
                           aria-label={t("threads.delete", { title: thread.title })}
-                          className="rounded-md p-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive focus-visible:opacity-100"
+                          className="grid size-11 shrink-0 place-items-center rounded-md text-muted-foreground opacity-100 hover:text-destructive focus-visible:opacity-100 sm:size-8 sm:opacity-0 sm:group-hover:opacity-100"
                           onClick={() => onDelete(thread.id)}
                         >
-                          <Trash2 className="size-3.5" />
+                          <Trash2 className="size-4" />
                         </button>
                       </>
                     )}
