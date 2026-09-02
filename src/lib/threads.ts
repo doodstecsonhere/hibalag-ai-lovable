@@ -129,19 +129,30 @@ async function cloudSave(userId: string, thread: Thread, messages: StoredMessage
   if (threadError) throw threadError;
 
   if (messages.length === 0) return;
-  const { error: messageError } = await supabase.from("chat_messages").upsert(
+
+  // Client-side message ids (from the AI SDK / offline engine) are arbitrary
+  // strings and are rejected by a uuid primary key, which silently lost the
+  // whole conversation for signed-in users. Rewrite the thread's messages with
+  // server-safe uuids instead of upserting on the client id.
+  const { error: clearError } = await supabase
+    .from("chat_messages")
+    .delete()
+    .eq("thread_id", thread.id);
+  if (clearError) throw clearError;
+
+  const { error: messageError } = await supabase.from("chat_messages").insert(
     messages.map((message) => ({
-      id: message.id,
+      id: newId(),
       thread_id: thread.id,
       user_id: userId,
       role: message.role,
       content: message.content,
       created_at: message.createdAt,
     })),
-    { onConflict: "id" },
   );
   if (messageError) throw messageError;
 }
+
 
 async function cloudDelete(id: string) {
   await supabase.from("chat_messages").delete().eq("thread_id", id);
