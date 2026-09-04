@@ -107,7 +107,7 @@ const bisaya = {
   "threads.rename": "Usba ang ngalan sa {title}",
   "threads.delete": "Papasa ang {title}",
   "threads.logout": "Log out",
-  "threads.login": "Log in (Beta)",
+  "threads.login": "Log in (optional)",
 
   // Auth dialog
   "auth.signinTitle": "Log in sa Hibalag AI",
